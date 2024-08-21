@@ -15,6 +15,24 @@ if( WebGL.isWebGL2Available() ) {
 }
 
 function init3D() {
+  // load the json data
+
+
+  // const cmsData = JSON.parse(document.getElementById('cms-data').textContent);
+  const storyScripts = document.querySelectorAll('.story-item');
+
+  // Initialize an array to hold all the stories
+  const allStories = [];
+
+  // Loop through each script tag and parse the JSON data
+  storyScripts.forEach(script => {
+    const storyData = JSON.parse(script.textContent);
+    allStories.push(storyData);
+  });
+
+  // Now allStories contains all the story data
+  console.log("are these all the stories? : ", allStories);
+
   // variables
   let storyFocus = false;
   let storyObject = {
@@ -97,14 +115,15 @@ function init3D() {
     node.userData = {
       title: item.title,
       body: item.body,
-      links: [],
+      tags: item.tag,
+      
     }
 
     
   } 
   
   // create the nodes with array.map()
-  storyList.stories.map((item) => {
+  allStories.map((item) => {
     story( item );
   });
   
