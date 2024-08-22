@@ -1,11 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls, WebGL } from 'three/examples/jsm/Addons.js';
 import { randFloat } from 'three/src/math/MathUtils.js';
-import storyList from "./assets/story-index.json";
 import { getFirstObject } from './helpers/rayCastHelper';
-import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/Addons.js';
-// console.log(storyList)
-// import data array hopefully from webflow
+import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 
 // check for webgl 2
 if( WebGL.isWebGL2Available() ) {
@@ -15,32 +12,26 @@ if( WebGL.isWebGL2Available() ) {
 }
 
 function init3D() {
-  // load the json data
-
+  ////////////////////// load the json data
 
   // const cmsData = JSON.parse(document.getElementById('cms-data').textContent);
   const storyScripts = document.querySelectorAll('.story-item');
-
+  
   // Initialize an array to hold all the stories
   const allStories = [];
 
   // Loop through each script tag and parse the JSON data
   storyScripts.forEach(script => {
+    // console.log("see the json", script.textContent);
     const storyData = JSON.parse(script.textContent);
     allStories.push(storyData);
   });
 
   // Now allStories contains all the story data
-  console.log("are these all the stories? : ", allStories);
+  // console.log("are these all the stories? : ", allStories);
 
   // variables
   let storyFocus = false;
-  let storyObject = {
-    title: "",
-    body: "",
-    links: [],
-  }
-
   
   // set up
   const viewport = document.querySelector( '[data-3d="c"]' );
@@ -52,42 +43,24 @@ function init3D() {
   renderer.setSize( window.innerWidth, window.innerHeight );
   viewport.appendChild( renderer.domElement );
   
-  // // // add css2d renderer
-  // const labelRenderer = new CSS2DRenderer();
-  // labelRenderer.setSize( window.innerWidth, window.innerHeight );
-  // labelRenderer.domElement.style.position = 'absolute';
-  // labelRenderer.domElement.style.top = '0px';
-  // document.body.appendChild( labelRenderer.domElement );
-
   // // add orbit controls
   let controls = new OrbitControls( camera, renderer.domElement );
+  controls.maxAzimuthAngle = 0;
+  controls.minAzimuthAngle = Math.PI * 0.15;
+  controls.maxPolarAngle = Math.PI ;
+  controls.minPolarAngle = 0;
   
   // // add light (needs work!)
   const dirLight = new THREE.DirectionalLight( 0xffffff, 5 );
   dirLight.position.set( 5, 5, 5 );
-  scene.add( dirLight );
-
-  
-  
-  
-
-  // const readTxt = async() => {
-  //   let url ="https://uploads-ssl.webflow.com/667da4ba702f74a7e038db4d/66ba289cc65fcb380d59e9bc_He%20comes%20from%20this%20alley%3B%20he%20goes%20from%20that%20alley.txt";
-  //   let response = await fetch (url);
-  //   const txt = await response.text().then(( str ) => {
-  //       // return str.split('\r');    // return the string after splitting it.
-  //       return str;
-  //   });
-  //   console.log( "retrieved story: ", txt );
-  // }
-  // readTxt();
+  scene.add( dirLight ); 
   
   // define story nodes
   const story = ( item ) => {
     // make the shape
-    const geo = new THREE.BoxGeometry( 0.5, 0.5, 0.5 );
-    const mat = new THREE.MeshBasicMaterial( { color: 0x0002fff } );
-    const matRed = new THREE.MeshBasicMaterial( { color: 0xDC } );
+    const geo = new THREE.BoxGeometry( 0.5, 0.5, 0.4 );
+    const white = new THREE.Color(1,1,1);
+    const mat = new THREE.MeshBasicMaterial( { color: white } );
     const node = new THREE.Mesh( geo, mat );
     scene.add( node );
 
@@ -116,10 +89,7 @@ function init3D() {
       title: item.title,
       body: item.body,
       tags: item.tag,
-      
     }
-
-    
   } 
   
   // create the nodes with array.map()
@@ -129,14 +99,19 @@ function init3D() {
   
   camera.position.z = 5;
   
-  // console.log("see inside", scene)
+  // define on hover
+  const handleHover = (event) => {
+    console.log("triggggg?", event);
+    if( !storyFocus ) {
+      // govern this out put
+      const select = getFirstObject( event, window, camera, scene );
+      if( select?.object ) {
+        const title = select.object.userData.title;
+        // console.log("title peak", select.object);
+      }
+    }
+  }
 
-  // add onClick
-  // // add the card element function
-  // const handleCard = () => {
-  //   console.log( 'handle card')
-  //   
-  // }
   //// define handleClick event function
   const handleClick = (event) => {
     if( storyFocus === false ) {
@@ -164,10 +139,12 @@ function init3D() {
 
     // 
   }
-  console.log("wth", storyFocus)
-  document.addEventListener('click', handleClick)
+  // console.log("wth", storyFocus)
+  document.addEventListener('click', handleClick);
+  document.onpointermove = handleHover ;
+  document.addEventListener('onpointermove', handleHover);
   
-
+  
   // animation loop
   function animate() { 
     // node.rotation.x += 0.01;
