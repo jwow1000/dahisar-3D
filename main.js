@@ -89,27 +89,89 @@ function init3D() {
       title: item.title,
       body: item.body,
       tags: item.tag,
+      chapter: item.chapter,
+      links: item.links,
     }
   } 
+
+  // look at the scene?
+  console.log("scene?", scene.children)
   
   // create the nodes with array.map()
   allStories.map((item) => {
     story( item );
   });
+
+  // define the line function
+  function lines( item ) {
+    const data = item.userData;
+    console.log('data', data)
+    if( data.links ) {
+      // define the origin
+      const originPoint = new THREE.Vector3( 
+        item.position.x,
+        item.position.y,
+        item.position.z,
+      );
+      
+      // define the material
+      const white = new THREE.Color(1,1,1);
+      const material = new THREE.LineBasicMaterial({color: white})
+      // define the points, origin(this items position), end(the connections)
+      // get the string and turn into an array
+      const links = data.links.replace(/\s/g, '').split(',');
+      
+      // run through the array
+      links.forEach((e) => {
+        // get item with chapter name
+        const found = scene.children.find((element) => element.userData.chapter === e);
+        console.log("e", found)
+        if( found ) {
+          // define a points array
+          const pointsArr = [];
+          
+          // set the origin point wuth this item's coordinates
+          pointsArr.push( originPoint );
+          // get found item's coordinates
+          pointsArr.push( new THREE.Vector3( 
+            found.position.x,
+            found.position.y,
+            found.position.z,
+          ));
+          
+          // form the line
+          const geometry = new THREE.BufferGeometry().setFromPoints(pointsArr);
+          const line = new THREE.Line( geometry, material);
+  
+          // add to scene
+          scene.add( line );
+
+        }
+
+      });
+    }
+  }
+  // create the line nodes
+  scene.children.map((item, idx) => {
+    // console.log("check ou the lines: ", item)
+    if( idx > 0 ) {
+      lines(item);
+    }
+  })
   
   camera.position.z = 5;
   
   // define on hover
   const handleHover = (event) => {
-    console.log("triggggg?", event);
-    if( !storyFocus ) {
-      // govern this out put
-      const select = getFirstObject( event, window, camera, scene );
-      if( select?.object ) {
-        const title = select.object.userData.title;
-        // console.log("title peak", select.object);
-      }
-    }
+    // console.log("triggggg?", event);
+    // if( !storyFocus ) {
+    //   // govern this out put
+    //   const select = getFirstObject( event, window, camera, scene );
+    //   if( select?.object ) {
+    //     const title = select.object.userData.title;
+    //     // console.log("title peak", select.object);
+    //   }
+    // }
   }
 
   //// define handleClick event function
