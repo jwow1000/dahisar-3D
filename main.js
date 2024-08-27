@@ -3,7 +3,7 @@ import { OrbitControls, WebGL } from 'three/examples/jsm/Addons.js';
 import { randFloat } from 'three/src/math/MathUtils.js';
 import { getFirstObject } from './helpers/rayCastHelper';
 import { panIt } from './helpers/panning';
-import { CSS2DObject } from 'three/examples/jsm/Addons.js';
+import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 
 const texLink = "https://cdn.prod.website-files.com/66c4bc9a1e606660c92d9d24/66cd3c3ab3738ac81d235de7_scribbles.png"
 
@@ -11,7 +11,7 @@ const texLink = "https://cdn.prod.website-files.com/66c4bc9a1e606660c92d9d24/66c
 if( WebGL.isWebGL2Available() ) {
   init3D();
 } else {
-  console.log("oops you dont have opengl2");
+  console.log("oops you dont have openGL2");
 }
 
 function init3D() {
@@ -35,9 +35,10 @@ function init3D() {
 
   // variables
   let storyFocus = false;
-  let titlePreview = 0;
+  let titlePreview = null;
+  const white = new THREE.Color(1,1,1);
   
-  // set up
+  ////////////////////// set up
   const viewport = document.querySelector( '[data-3d="c"]' );
   
   // // define scene, camera, renderer
@@ -57,6 +58,7 @@ function init3D() {
   let controls = new OrbitControls( camera, renderer.domElement );
   controls.enableRotate = false;
   controls.enablePan = false;
+  controls.enableZoom = true;
   // controls.keys = {
   //   LEFT: 'ArrowLeft', //left arrow
   //   UP: 'ArrowUp', // up arrow
@@ -79,11 +81,20 @@ function init3D() {
   raycaster.far = 10;
   raycaster.near = 0;
 
+  // Set up the CSS2DRenderer
+  const labelRenderer = new CSS2DRenderer();
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0';
+  document.body.appendChild(labelRenderer.domElement);
+
+
   function onPointerMove( event ) {
     // calculate pointer position in normalized device coordinates
     // (-1 to +1) for both components
     pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    
     pointerMoved = true;
   }
 
@@ -99,24 +110,43 @@ function init3D() {
     const intersects = raycaster.intersectObjects( filtered );
     // console.log("ifjdksal", intersects)
     if( intersects.length > 0 ) {
-      // console.log("intererere", intersects[0]);
+      // console.log("intererere", titlePreview);
+      
+      const item = intersects[0];
+
+      // if( titlePreview && item !== titlePreview  ) {
+      //   // turn off other object
+      //   titlePreview.object.userData.showTitle = false;
+      //   titlePreview = item;
+
+      // } else {
+      //   titlePreview.object.userData.showTitle = true;
+      // }
+
       // show this objects title on hover
-      intersects[0].object.material.color.set( red );
+      // intersects[0].object.material.color.set( red );
     } else {
-      // disable all titles
+      // disable the last object titlePreview
+      // titlePreview.object.userData.showTitle = false;
+      // titlePreview = null;
     }
     pointerMoved = false;
-    
-
   }
+  
   window.addEventListener( 'pointermove', onPointerMove );
-
+  // if title preview is truthy, render the title of that object
+  function renderTitle() {
+    if( titlePreview ) {
+      titlePreview.object.userData.showTitle = true;
+    } else {
+      console.log(" no title");
+    }
+  }
   ////////////////////// 
   // define story nodes
   const story = ( item ) => {
     // make the shape
     const geometry = new THREE.PlaneGeometry( 0.5, 0.5 );
-    const white = new THREE.Color(1,1,1);
     // image texture
     const texture = new THREE.TextureLoader().load(
       texLink
@@ -132,23 +162,19 @@ function init3D() {
     scene.add( node );
 
     const rand = {
-      x: randFloat( -3, 3 ),
-      y: randFloat( -3, 3 ),
-      z: randFloat( -3, 0 ),
+      x: randFloat( -6, 6 ),
+      y: randFloat( -6, 6 ),
+      z: randFloat( -6, 0 ),
     }
 
-    // make the label
-    // // make a div element in the document
-    const titleDiv = document.createElement( 'div' );
-    titleDiv.className = 'label';
-    titleDiv.textContent = item.title;
-    titleDiv.style.backgroundColor = 'transparent';
-    // // make a CSSD object
-    const titleLabel = new CSS2DObject( titleDiv );
-    titleLabel.position.set( rand.x, rand.y, rand.z );
-    titleLabel.center.set( 0, 1 );
-    node.add( titleLabel );
-    // titleLabel.layers.set( 0 );
+    // Create a 2D label
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'label';
+    labelDiv.textContent = item.title;
+    const label = new CSS2DObject( labelDiv );
+    label.position.set(0, -1, 0); // Position the label below the plane
+    node.add(label);
+
 
     node.position.set( rand.x, rand.y, rand.z);
     
@@ -158,6 +184,7 @@ function init3D() {
       tags: item.tag,
       chapter: item.chapter,
       links: item.links,
+      showTitle: false,
     }
   } 
 
@@ -226,7 +253,7 @@ function init3D() {
     }
   })
 
-  camera.position.z = 5;
+  camera.position.z = 1;
   
   // define on hover
   const handleHover = (event) => {
@@ -280,8 +307,10 @@ function init3D() {
     // node.rotation.y += 0.01;
     if( pointerMoved ) {
       renderRaycast();
+      renderTitle();
     }
     renderer.render( scene, camera );
+    labelRenderer.render(scene, camera);
   }
   
   renderer.setAnimationLoop( animate );
