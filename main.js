@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls, WebGL } from 'three/examples/jsm/Addons.js';
 import { randFloat } from 'three/src/math/MathUtils.js';
 import { getFirstObject } from './helpers/rayCastHelper';
+import { panIt } from './helpers/panning';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 
 const texLink = "https://cdn.prod.website-files.com/66c4bc9a1e606660c92d9d24/66cd3c3ab3738ac81d235de7_scribbles.png"
@@ -14,9 +15,8 @@ if( WebGL.isWebGL2Available() ) {
 }
 
 function init3D() {
-  ////////////////////// load the json data
-
-  // const cmsData = JSON.parse(document.getElementById('cms-data').textContent);
+  ////////////////////// 
+  // get the cms data from the webflow page collections item
   const storyScripts = document.querySelectorAll('.story-item');
   
   // Initialize an array to hold all the stories
@@ -28,12 +28,14 @@ function init3D() {
     const storyData = JSON.parse(script.textContent);
     allStories.push(storyData);
   });
+  ////////////////////// 
 
   // Now allStories contains all the story data
   // console.log("are these all the stories? : ", allStories);
 
   // variables
   let storyFocus = false;
+  let titlePreview = 0;
   
   // set up
   const viewport = document.querySelector( '[data-3d="c"]' );
@@ -49,32 +51,81 @@ function init3D() {
   renderer.setSize( window.innerWidth, window.innerHeight );
   viewport.appendChild( renderer.domElement );
   
-  // // add orbit controls
+  // custom panning
+  panIt( camera );
+  // add orbit controls
   let controls = new OrbitControls( camera, renderer.domElement );
-  controls.maxAzimuthAngle = 0;
-  controls.minAzimuthAngle = Math.PI * 0.15;
-  controls.maxPolarAngle = Math.PI ;
-  controls.minPolarAngle = 0;
+  controls.enableRotate = false;
+  controls.enablePan = false;
+  // controls.keys = {
+  //   LEFT: 'ArrowLeft', //left arrow
+  //   UP: 'ArrowUp', // up arrow
+  //   RIGHT: 'ArrowRight', // right arrow
+  //   BOTTOM: 'ArrowDown' // down arrow
+  // }
   
   // // add light (needs work!)
   const dirLight = new THREE.DirectionalLight( 0xffffff, 5 );
   dirLight.position.set( 5, 5, 5 );
   scene.add( dirLight ); 
   
+  // Raycasting set up
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  const red = new THREE.Color(255,0,20);
+  let pointerMoved = false;
+
+  // set raycaster options
+  raycaster.far = 10;
+  raycaster.near = 0;
+
+  function onPointerMove( event ) {
+    // calculate pointer position in normalized device coordinates
+    // (-1 to +1) for both components
+    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    pointerMoved = true;
+  }
+
+  function renderRaycast() {
+    // update the picking ray with the camera and pointer position
+    raycaster.setFromCamera( pointer, camera );
+    
+    // calculate objects intersecting the picking ray, filter out the lines
+    const filtered = scene.children.filter( (object) => {
+        return object.type !== "Line";
+    })
+
+    const intersects = raycaster.intersectObjects( filtered );
+    // console.log("ifjdksal", intersects)
+    if( intersects.length > 0 ) {
+      // console.log("intererere", intersects[0]);
+      // show this objects title on hover
+      intersects[0].object.material.color.set( red );
+    } else {
+      // disable all titles
+    }
+    pointerMoved = false;
+    
+
+  }
+  window.addEventListener( 'pointermove', onPointerMove );
+
+  ////////////////////// 
   // define story nodes
   const story = ( item ) => {
     // make the shape
-    const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.1 );
+    const geometry = new THREE.PlaneGeometry( 0.5, 0.5 );
     const white = new THREE.Color(1,1,1);
     // image texture
     const texture = new THREE.TextureLoader().load(
       texLink
     );
-    const material = new THREE.MeshBasicMaterial({
-      transparent: true,
-      map: texture,
+    const material = new THREE.MeshLambertMaterial({
+      // transparent: true,
+      // map: texture,
       color: white,
-      side: THREE.DoubleSide,
+      // side: THREE.DoubleSide,
     });
     const node = new THREE.Mesh( geometry, material );
     // node.geometry.computeBoundingBox();
@@ -83,7 +134,7 @@ function init3D() {
     const rand = {
       x: randFloat( -3, 3 ),
       y: randFloat( -3, 3 ),
-      z: randFloat( -3, 3 ),
+      z: randFloat( -3, 0 ),
     }
 
     // make the label
@@ -219,14 +270,17 @@ function init3D() {
   }
   // console.log("wth", storyFocus)
   document.addEventListener('click', handleClick);
-  document.onpointermove = handleHover ;
-  document.addEventListener('onpointermove', handleHover);
+  // document.onpointermove = handleHover ;
+  // document.addEventListener('onpointermove', handleHover);
   
   
   // animation loop
   function animate() { 
     // node.rotation.x += 0.01;
     // node.rotation.y += 0.01;
+    if( pointerMoved ) {
+      renderRaycast();
+    }
     renderer.render( scene, camera );
   }
   

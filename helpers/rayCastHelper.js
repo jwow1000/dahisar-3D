@@ -13,12 +13,24 @@ export function getFirstObject( event, window, camera, scene ) {
     getFirstValue
   );
 
-  const wheelList = intersections;
+  const intersectList = [];
   
-  console.log(":ljkgfd", wheelList);
+  console.log("look at the intersections: ", intersections[0].object.userData)
+
+  intersections.forEach( (intersect) => {
+    console.log("for eacj", intersect)
+    if( intersect.object.type !== 'Line'  ) {
+      intersectList.push( intersect );
+    }
+    
+  });
   
-  if (typeof wheelList[0] !== "undefined") {
-    return wheelList[0];
+  console.log("interesectionssss", intersectList)
+  
+  console.log(":ljkgfd", intersectList);
+  
+  if (typeof intersectList[0] !== "undefined") {
+    return intersectList[0];
   }
 
   return null;
@@ -51,9 +63,10 @@ export function getObjects( objectList ) {
   const storyObjects = [];
 
   objectList.forEach((object) => {
-    if( object.userData.title ) {
-      storyObjects.push( object );
-    }
+    storyObjects.push( object );
+    // if( object.userData.title ) {
+    //   storyObjects.push( object );
+    // }
   });
   // console.log( "object", storyObjects)
 
