@@ -4,6 +4,8 @@ import { randFloat } from 'three/src/math/MathUtils.js';
 import { getFirstObject } from './helpers/rayCastHelper';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 
+const texLink = "https://cdn.prod.website-files.com/66c4bc9a1e606660c92d9d24/66cd3c3ab3738ac81d235de7_scribbles.png"
+
 // check for webgl 2
 if( WebGL.isWebGL2Available() ) {
   init3D();
@@ -39,7 +41,11 @@ function init3D() {
   // // define scene, camera, renderer
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-  const renderer = new THREE.WebGLRenderer( {antialias: true} );
+  const renderer = new THREE.WebGLRenderer( {
+    antialias: true,
+    alpha: true
+  });
+  renderer.setClearColor(0x000000, 0); // 0 is fully transparent
   renderer.setSize( window.innerWidth, window.innerHeight );
   viewport.appendChild( renderer.domElement );
   
@@ -58,10 +64,20 @@ function init3D() {
   // define story nodes
   const story = ( item ) => {
     // make the shape
-    const geo = new THREE.BoxGeometry( 0.5, 0.5, 0.4 );
+    const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.1 );
     const white = new THREE.Color(1,1,1);
-    const mat = new THREE.MeshBasicMaterial( { color: white } );
-    const node = new THREE.Mesh( geo, mat );
+    // image texture
+    const texture = new THREE.TextureLoader().load(
+      texLink
+    );
+    const material = new THREE.MeshBasicMaterial({
+      transparent: true,
+      map: texture,
+      color: white,
+      side: THREE.DoubleSide,
+    });
+    const node = new THREE.Mesh( geometry, material );
+    // node.geometry.computeBoundingBox();
     scene.add( node );
 
     const rand = {
@@ -95,7 +111,7 @@ function init3D() {
   } 
 
   // look at the scene?
-  console.log("scene?", scene.children)
+  console.log("scene?", allStories)
   
   // create the nodes with array.map()
   allStories.map((item) => {
@@ -115,7 +131,7 @@ function init3D() {
       );
       
       // define the material
-      const white = new THREE.Color(1,1,1);
+      const white = new THREE.Color(0,0,0);
       const material = new THREE.LineBasicMaterial({color: white})
       // define the points, origin(this items position), end(the connections)
       // get the string and turn into an array
@@ -158,7 +174,7 @@ function init3D() {
       lines(item);
     }
   })
-  
+
   camera.position.z = 5;
   
   // define on hover
@@ -183,7 +199,7 @@ function init3D() {
         // storyObject = select;
         // make card appear
         const card = document.querySelector( '#story-card' );
-        card.style.zIndex = 100;
+        card.style.display = "block";
         // change the title text
         const t = document.querySelector( "#story-title");
         t.textContent = data.title; 
@@ -195,7 +211,7 @@ function init3D() {
       }
     } else if ( storyFocus === true ) {
       const card = document.querySelector( '#story-card' );
-      card.style.zIndex = -100;
+      card.style.display = "none";
       storyFocus = false;
     }
 
@@ -218,4 +234,3 @@ function init3D() {
 
 }
 
-// document.body.appendChild( renderer.domElement );

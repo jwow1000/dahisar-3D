@@ -14,7 +14,9 @@ export function getFirstObject( event, window, camera, scene ) {
   );
 
   const wheelList = intersections;
-
+  
+  console.log(":ljkgfd", wheelList);
+  
   if (typeof wheelList[0] !== "undefined") {
     return wheelList[0];
   }
@@ -34,19 +36,26 @@ export function getMouseVector2(event, window) {
 export function checkRayIntersections(mousePointer, camera, raycaster, scene) {
   raycaster.setFromCamera(mousePointer, camera);
 
-  let intersections = raycaster.intersectObjects(scene.children, true);
+  const cards = getObjects( scene.children );
+
+  console.log("carsdsd", cards);
+
+  let intersections = raycaster.intersectObjects( cards, true);
+
+  console.log("Intersections:", intersections); // Debug log
 
   return intersections;
 }
 
-// export function getObjects( objectList ) {
-//   const storyObjects = [];
+export function getObjects( objectList ) {
+  const storyObjects = [];
 
-//   objectList.forEach((object) => {
-//     console.log( "object", object.userData )
-//     const objectData = object.userData || "Untitled Object";
-//     objectData.includes(title) ? wheelObjects.push(object.userData) : null;
-//   });
+  objectList.forEach((object) => {
+    if( object.userData.title ) {
+      storyObjects.push( object );
+    }
+  });
+  // console.log( "object", storyObjects)
 
-//   return storyObjects;
-// }
+  return storyObjects;
+}
