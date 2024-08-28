@@ -1,4 +1,5 @@
 import * as THREE from "three";
+
 export function panIt( camera ) {
 
   let isPanning = false;
@@ -17,7 +18,7 @@ export function panIt( camera ) {
       panEnd.set(event.clientX, event.clientY);
       panDelta.subVectors(panEnd, panStart);
   
-      const panSpeed = 0.002; // Adjust for faster/slower panning
+      const panSpeed = 0.004; // Adjust for faster/slower panning
   
       const offsetX = -panDelta.x * panSpeed;
       const offsetY = panDelta.y * panSpeed;
@@ -35,9 +36,26 @@ export function panIt( camera ) {
       isPanning = false;
   }
   
-  window.addEventListener('mousedown', onMouseDown);
-  window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mouseup', onMouseUp);
+  // Custom zoom function
+  function onDocumentMouseWheel( event ) {
+    event.preventDefault();
+
+    // Define zoom sensitivity
+    const zoomSensitivity = .01;
+
+    // Move camera along the z-axis
+    camera.position.z += event.deltaY * zoomSensitivity;
+
+    // Constrain camera position within limits
+    camera.position.z = THREE.MathUtils.clamp(camera.position.z, 0, 10);
+  }
+
+  // Add event listener for the mouse wheel
+  document.addEventListener('wheel', onDocumentMouseWheel, false);
+
+  document.addEventListener('mousedown', onMouseDown);
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
   
 
 }  
