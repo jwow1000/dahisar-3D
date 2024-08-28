@@ -301,7 +301,7 @@ function init3D() {
       renderTitle();
     }
     renderer.render( scene, camera );
-    labelRenderer.render(scene, camera);
+    labelRenderer.render( scene, camera );
   }
   
   renderer.setAnimationLoop( animate );

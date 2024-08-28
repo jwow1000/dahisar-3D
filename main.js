@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls, WebGL } from 'three/examples/jsm/Addons.js';
+import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { getStories } from './helpers/fetch';
 import { panIt } from './helpers/panning';
 import { story, line } from './helpers/customObjects';
+import { getHover } from './helpers/rayCaster';
 
 
 // check for webgl 2
@@ -44,6 +46,14 @@ function init3D() {
     story( item, scene );
   });
 
+  // render the labels 
+  // Set up the CSS2DRenderer
+  const labelRenderer = new CSS2DRenderer();
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0';
+  document.body.appendChild(labelRenderer.domElement);
+
   // create the lines
   scene.children.map((item, idx) => {
     // console.log("check out the lines: ", item)
@@ -51,6 +61,8 @@ function init3D() {
       line( item, scene );
     }
   })
+
+  getHover( scene, camera, viewport );
 
   ////////////////////// render
   // animation loop
@@ -65,9 +77,10 @@ function init3D() {
     // requestAnimationFrame( animate );
     // camera.position.lerp( targetCameraPos, dampingFactor );
     renderer.render( scene, camera );
-    // labelRenderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
   }
   
   renderer.setAnimationLoop( animate );
+  labelRenderer.render(scene, camera);
 
 }

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
+import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import { randFloat } from 'three/src/math/MathUtils.js';
 
 const white = new THREE.Color("rgb(255,255,255,0.1)");
@@ -33,7 +33,9 @@ export const story = ( item, scene ) => {
   labelDiv.textContent = item.title;
   const label = new CSS2DObject( labelDiv );
   label.position.set(0, -1, 0); // Position the label below the plane
-  node.add(label);
+  label.visible = false;
+  node.add( label );
+
 
 
   node.position.set( rand.x, rand.y, rand.z);

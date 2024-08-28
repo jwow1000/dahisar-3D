@@ -38,7 +38,7 @@ export function panIt( camera ) {
   
   // Custom zoom function
   function onDocumentMouseWheel( event ) {
-    event.preventDefault();
+    // event.preventDefault();
 
     // Define zoom sensitivity
     const zoomSensitivity = .01;
