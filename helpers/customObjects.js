@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import { randFloat } from 'three/src/math/MathUtils.js';
 
-const white = new THREE.Color("rgb(255,255,255,0.1)");
+const blau = new THREE.Color("rgb(25,255,255,0.1)");
 
 export const story = ( item, scene ) => {
   // make the shape
@@ -14,7 +14,7 @@ export const story = ( item, scene ) => {
   const material = new THREE.MeshLambertMaterial({
     // transparent: true,
     // map: texture,
-    color: white,
+    // color: white,
     // side: THREE.DoubleSide,
   });
   const node = new THREE.Mesh( geometry, material );
@@ -29,10 +29,43 @@ export const story = ( item, scene ) => {
 
   // Create a 2D label
   const labelDiv = document.createElement('div');
-  labelDiv.className = 'label';
-  labelDiv.textContent = item.title;
+  const titleDiv = document.createElement('div');
+  const tagsDiv = document.createElement('div');
+
+  // label container data
+  labelDiv.className = 'story-container-preview';
+  
+  // title data
+  titleDiv.className = 'story-title-preview';
+  titleDiv.textContent = item.title;
+  
+  // tag data
+  tagsDiv.className = 'story-tags-container';
+
+  // get the string and turn into an array
+  if( item.tags ) {
+    
+    const tags = item.tags.replace(/\s/g, '').split(',');
+    tags.forEach(( tag ) => {
+      console.log("is tags working?");
+      // maybe have to make these links
+      const div = document.createElement('div');
+      div.className = 'story-tag'
+      div.textContent = tag;
+      tagsDiv.appendChild( div );
+    }); 
+
+  }
+
+  labelDiv.appendChild( titleDiv );
+  labelDiv.appendChild( tagsDiv );
+  console.log( "check the label div", labelDiv);
+  
   const label = new CSS2DObject( labelDiv );
-  label.position.set(0, -1, 0); // Position the label below the plane
+  label.position.set(0, 0, 0); // Position the label below the plane
+  // // style the label
+  // const styleMe = label.element.style;
+  // styleMe.backgroundColor = "rgb(120,120,120)";
   label.visible = false;
   node.add( label );
 
@@ -43,7 +76,7 @@ export const story = ( item, scene ) => {
   node.userData = {
     title: item.title,
     body: item.body,
-    tags: item.tag,
+    tags: item.tags,
     chapter: item.chapter,
     links: item.links,
     showTitle: false,
@@ -63,7 +96,7 @@ export const line = ( item, scene ) => {
       );
       
       // define the material
-      const material = new THREE.LineBasicMaterial({color: white})
+      const material = new THREE.LineBasicMaterial({color: blau})
       
       // define the points, origin(this items position), end(the connections)
       // get the string and turn into an array
