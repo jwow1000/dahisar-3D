@@ -35,7 +35,35 @@ function init3D() {
   viewport.appendChild( renderer.domElement );
   
   // custom panning
-  panIt( camera, viewport );
+  // panIt( camera, viewport );
+  
+  // orbit controls
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  // Disable rotation
+  controls.enableRotate = false;
+
+  // Allow panning only on X and Y axes
+  controls.screenSpacePanning = false; // Prevent panning on Z-axis
+  controls.maxPolarAngle = Math.PI / 2; // Lock vertical rotation
+
+  // Zoom settings
+  controls.enableZoom = true; // Allow zooming
+  controls.zoomSpeed = 1.0; // Adjust zoom speed
+
+  // Optional: Set min/max distances to control how far the camera can zoom
+  controls.minDistance = 1; // Minimum zoom distance
+  controls.maxDistance = 10; // Maximum zoom distance
+
+  // Damping (smooth movement)
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.1;
+
+  // prevent z rotation
+  controls.addEventListener('change', () => {
+    camera.position.z = Math.max(controls.minDistance, Math.min(controls.maxDistance, camera.position.z));
+  });
+  
 
   // start camera position
   camera.position.z = 1;
@@ -76,6 +104,7 @@ function init3D() {
     // controls.update();
     // requestAnimationFrame( animate );
     // camera.position.lerp( targetCameraPos, dampingFactor );
+    controls.update(); // Required if enableDamping is true
     renderer.render( scene, camera );
     labelRenderer.render(scene, camera);
   }
