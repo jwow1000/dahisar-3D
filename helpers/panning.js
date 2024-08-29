@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export function panIt( camera ) {
+export function panIt( camera, viewport ) {
 
   let isPanning = false;
   let panStart = new THREE.Vector2();

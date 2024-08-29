@@ -35,7 +35,7 @@ function init3D() {
   viewport.appendChild( renderer.domElement );
   
   // custom panning
-  panIt( camera );
+  panIt( camera, viewport );
 
   // start camera position
   camera.position.z = 1;

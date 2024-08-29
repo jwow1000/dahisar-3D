@@ -25,8 +25,8 @@ export function getHover( scene, camera, canvas ) {
     
   }
 
+  // clear all titles
   function clearAll() {
-    // clear all titles
     scene.children.forEach(( child ) => {
       
       if( child.type !== "Line" ) {
