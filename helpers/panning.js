@@ -114,17 +114,7 @@ export function panIt( camera, viewport ) {
   document.addEventListener('touchmove', onTouchMove);
   document.addEventListener('touchend', onTouchEnd);
 
-  // // prevent zooming on ios devices
-  // document.addEventListener('gesturestart', function(event) {
-  //   event.preventDefault();
-  // });
-
-  // // prevent double-tap zoom
-  // document.addEventListener('touchstart', function(event) {
-  //   if (event.touches.length > 1) {
-  //       event.preventDefault(); // Prevent double-tap zoom
-  //   }
-  // }, { passive: false });
+  
 
 
 }  

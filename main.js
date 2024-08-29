@@ -63,6 +63,18 @@ function init3D() {
   controls.addEventListener('change', () => {
     camera.position.z = Math.max(controls.minDistance, Math.min(controls.maxDistance, camera.position.z));
   });
+
+  // prevent zooming on ios devices
+  document.addEventListener('gesturestart', function(event) {
+    event.preventDefault();
+  });
+
+  // prevent double-tap zoom
+  document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Prevent double-tap zoom
+    }
+  }, { passive: false });
   
 
   // start camera position
