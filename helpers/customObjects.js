@@ -4,6 +4,7 @@ import { randFloat } from 'three/src/math/MathUtils.js';
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
 
+
 export const story = ( item, scene ) => {
   // make the shape
   const geometry = new THREE.PlaneGeometry( 0.5, 0.5 );

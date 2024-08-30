@@ -8,9 +8,6 @@ let storyFocus = false;
 raycaster.far = 20;
 
 
-// Create a 2D label
-const labelDiv = document.createElement('div');
-
 export function getHover( scene, camera, canvas ) {
 
   function onPointerMove( event ) {

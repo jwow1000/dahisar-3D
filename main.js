@@ -2,10 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls, WebGL } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { getStories } from './helpers/fetch';
-import { panIt } from './helpers/panning';
 import { story, line } from './helpers/customObjects';
 import { getHover } from './helpers/rayCaster';
-
 
 // check for webgl 2
 if( WebGL.isWebGL2Available() ) {
@@ -20,7 +18,6 @@ function init3D() {
   const allStories = getStories();
 
   ////////////////////// set up
-  const viewport = document.querySelector( '[data-3d="c"]' );
   
   // // define scene, camera, renderer
   const scene = new THREE.Scene();
@@ -32,6 +29,8 @@ function init3D() {
 
   renderer.setClearColor(0x000000, 0); // 0 is fully transparent
   renderer.setSize( window.innerWidth, window.innerHeight );
+  
+  const viewport = document.getElementById('three-js-canvas');
   viewport.appendChild( renderer.domElement );
   
   // custom panning
@@ -44,12 +43,13 @@ function init3D() {
   controls.enableRotate = false;
 
   // Allow panning only on X and Y axes
+  controls.enablePan = true;
   controls.screenSpacePanning = false; // Prevent panning on Z-axis
   controls.maxPolarAngle = Math.PI / 2; // Lock vertical rotation
 
   // Zoom settings
   controls.enableZoom = true; // Allow zooming
-  controls.zoomSpeed = 1.0; // Adjust zoom speed
+  controls.zoomSpeed = 2.0; // Adjust zoom speed
 
   // Optional: Set min/max distances to control how far the camera can zoom
   controls.minDistance = 1; // Minimum zoom distance
@@ -75,12 +75,10 @@ function init3D() {
         event.preventDefault(); // Prevent double-tap zoom
     }
   }, { passive: false });
-  
 
   // start camera position
-  camera.position.z = 1;
+  camera.position.z = 6;
 
-  
   // create the stories
   allStories.map((item) => {
     story( item, scene );
@@ -92,7 +90,8 @@ function init3D() {
   labelRenderer.setSize(window.innerWidth, window.innerHeight);
   labelRenderer.domElement.style.position = 'absolute';
   labelRenderer.domElement.style.top = '0';
-  document.body.appendChild(labelRenderer.domElement);
+  labelRenderer.domElement.style.pointerEvents = 'none'; // Ensures that labels don't interfere with mouse events
+  viewport.appendChild(labelRenderer.domElement);
 
   // create the lines
   scene.children.map((item, idx) => {
@@ -104,24 +103,20 @@ function init3D() {
 
   getHover( scene, camera, viewport );
 
-  ////////////////////// render
   // animation loop
   function animate() { 
-    // node.rotation.x += 0.01;
-    // node.rotation.y += 0.01;
-    // if( pointerMoved ) {
-    //   renderRaycast();
-    //   renderTitle();
-    // }
-    // controls.update();
-    // requestAnimationFrame( animate );
-    // camera.position.lerp( targetCameraPos, dampingFactor );
-    controls.update(); // Required if enableDamping is true
+    
+    // update the damping camera movement
+    controls.update(); 
+    
+    // render the 3d scene
     renderer.render( scene, camera );
+    
+    // render the CSS labels
     labelRenderer.render(scene, camera);
+
   }
   
   renderer.setAnimationLoop( animate );
-  labelRenderer.render(scene, camera);
 
 }
