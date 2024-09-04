@@ -3,23 +3,26 @@ import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import { randFloat } from 'three/src/math/MathUtils.js';
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
+const white = new THREE.Color("rgb(255,255,255)");
 
 
 export const story = ( item, scene ) => {
+  console.log("stroury item", item)
   // make the shape
   const geometry = new THREE.PlaneGeometry( 0.5, 0.5 );
+  
   // image texture
-  // const texture = new THREE.TextureLoader().load(
-  //   texLink
-  // );
-  const material = new THREE.MeshLambertMaterial({
-    // transparent: true,
-    // map: texture,
-    // color: white,
-    // side: THREE.DoubleSide,
+  const texture = new THREE.TextureLoader().load(
+    item.cutout
+  );
+  texture.colorSpace = THREE.SRGBColorSpace;
+
+  const material = new THREE.MeshBasicMaterial({
+    transparent: true,
+    map: texture,
   });
   const node = new THREE.Mesh( geometry, material );
-  // node.geometry.computeBoundingBox();
+  
   scene.add( node );
 
   const rand = {

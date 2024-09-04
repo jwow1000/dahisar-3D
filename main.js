@@ -3,6 +3,7 @@ import { OrbitControls, WebGL } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { getStories } from './helpers/fetch';
 import { story, line } from './helpers/customObjects';
+import { setControls } from './helpers/controlsSetup';
 import { getHover } from './helpers/rayCaster';
 
 // check for webgl 2
@@ -17,9 +18,7 @@ function init3D() {
   // get the stories
   const allStories = getStories();
 
-  ////////////////////// set up
-  
-  // // define scene, camera, renderer
+  // define scene, camera, renderer
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
   const renderer = new THREE.WebGLRenderer( {
@@ -30,6 +29,8 @@ function init3D() {
   renderer.setClearColor(0x000000, 0); // 0 is fully transparent
   renderer.setSize( window.innerWidth, window.innerHeight );
   
+  
+  // const viewport = document.querySelector(['data-id="3Js-canvas"'])
   const viewport = document.getElementById('three-js-canvas');
   viewport.appendChild( renderer.domElement );
   
@@ -38,47 +39,10 @@ function init3D() {
   
   // orbit controls
   const controls = new OrbitControls(camera, renderer.domElement);
-
-  // Disable rotation
-  controls.enableRotate = false;
-
-  // Allow panning only on X and Y axes
-  controls.enablePan = true;
-  controls.screenSpacePanning = false; // Prevent panning on Z-axis
-  controls.maxPolarAngle = Math.PI / 2; // Lock vertical rotation
-
-  // Zoom settings
-  controls.enableZoom = true; // Allow zooming
-  controls.zoomSpeed = 2.0; // Adjust zoom speed
-
-  // Optional: Set min/max distances to control how far the camera can zoom
-  controls.minDistance = 1; // Minimum zoom distance
-  controls.maxDistance = 10; // Maximum zoom distance
-
-  // Damping (smooth movement)
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.1;
-
-  // prevent z rotation
-  controls.addEventListener('change', () => {
-    camera.position.z = Math.max(controls.minDistance, Math.min(controls.maxDistance, camera.position.z));
-  });
-
-  // prevent zooming on ios devices
-  document.addEventListener('gesturestart', function(event) {
-    event.preventDefault();
-  });
-
-  // prevent double-tap zoom
-  document.addEventListener('touchstart', function(event) {
-    if (event.touches.length > 1) {
-        event.preventDefault(); // Prevent double-tap zoom
-    }
-  }, { passive: false });
-
-  // start camera position
-  camera.position.z = 6;
-
+  
+  // customize the Orbit Controls
+  setControls( controls, camera );
+  
   // create the stories
   allStories.map((item) => {
     story( item, scene );
@@ -91,7 +55,7 @@ function init3D() {
   labelRenderer.domElement.style.position = 'absolute';
   labelRenderer.domElement.style.top = '0';
   labelRenderer.domElement.style.pointerEvents = 'none'; // Ensures that labels don't interfere with mouse events
-  viewport.appendChild(labelRenderer.domElement);
+  viewport.appendChild( labelRenderer.domElement );
 
   // create the lines
   scene.children.map((item, idx) => {
@@ -101,20 +65,20 @@ function init3D() {
     }
   })
 
-  getHover( scene, camera, viewport );
+  getHover( scene, camera );
 
   // animation loop
   function animate() { 
     
-    // update the damping camera movement
-    controls.update(); 
+    // render the CSS labels
+    labelRenderer.render(scene, camera);
     
     // render the 3d scene
     renderer.render( scene, camera );
     
-    // render the CSS labels
-    labelRenderer.render(scene, camera);
-
+    // update the damping camera movement
+    controls.update(); 
+    
   }
   
   renderer.setAnimationLoop( animate );

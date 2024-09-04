@@ -8,7 +8,7 @@ let storyFocus = false;
 raycaster.far = 20;
 
 
-export function getHover( scene, camera, canvas ) {
+export function getHover( scene, camera ) {
 
   function onPointerMove( event ) {
     // calculate pointer position in normalized device coordinates
