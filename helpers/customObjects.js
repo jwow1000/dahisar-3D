@@ -101,7 +101,11 @@ export const line = ( item, scene ) => {
       );
 
       // define the material
-      const material = new THREE.LineBasicMaterial({color: blau})
+      const material = new THREE.LineBasicMaterial({
+        color: blau, 
+        opacity: 0.5,
+        transparent: true,
+      })
       
       // define the points, origin(this items position), end(the connections)
       // get the string and turn into an array

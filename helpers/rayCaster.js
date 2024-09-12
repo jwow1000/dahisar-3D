@@ -27,10 +27,17 @@ export function getHover( scene, camera ) {
   // clear all titles
   function clearAllPreviews() {
     scene.children.forEach(( child ) => {
-      
+      // clear the preview
       if( child.type !== "Line" ) {
         child.children[0].visible = false;
-      }
+      } 
+      // return opacity back to 70%
+      child.children.forEach((item, idx) => {
+        if( idx > 0 ) {
+          item.material.opacity = 0.5;
+        }
+      });
+
     })
   }
 
@@ -54,6 +61,7 @@ export function getHover( scene, camera ) {
     
     // filter out everything but the plane nodes
     const filtered = intersects.filter((child) => {
+      // the lines or the background don't have faces so filter this way
       if( child.face ) {
         return child;
       }
@@ -73,6 +81,15 @@ export function getHover( scene, camera ) {
 
       // hilight line connections
       // console.log("itemed hovered", item);
+      item.object.children.forEach((child, idx) => {
+        
+        // make full opaque, 1
+        if( idx !== 0 ) {
+          child.material.opacity = 1;
+        }
+
+      });
+
     } else {
       clearAllPreviews();
     }
