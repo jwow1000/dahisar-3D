@@ -39,7 +39,9 @@ export function getHover( scene, camera ) {
     clearAllPreviews();
 
     // show the new one
-    item.object.children[0].visible = true;
+    if( item.object.children[0] ) {
+      item.object.children[0].visible = true;
+    }
   }
 
   // get the top intersecting card
@@ -47,13 +49,18 @@ export function getHover( scene, camera ) {
     // update camera and pointer position
     raycaster.setFromCamera( pointer, camera );
     
-    // get only the cards
-    const kinder = scene.children.filter(( child ) => child.type !== "Line");
-    
     // get the intersects
-    const intersects = raycaster.intersectObjects( kinder );
-    if( intersects.length > 0 ) {
-      return intersects[0];
+    const intersects = raycaster.intersectObjects( scene.children );
+    
+    // filter out everything but the plane nodes
+    const filtered = intersects.filter((child) => {
+      if( child.face ) {
+        return child;
+      }
+    });
+    
+    if( filtered.length > 0 ) {
+      return filtered[0];
     }
     return null
   }
@@ -62,8 +69,10 @@ export function getHover( scene, camera ) {
     const item = getIntersect();
     
     if( item ) {
-      // console.log("the intersects!!", intersects[0]);
       drawTitle( item );
+
+      // hilight line connections
+      // console.log("itemed hovered", item);
     } else {
       clearAllPreviews();
     }

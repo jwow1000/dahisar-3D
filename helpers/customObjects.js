@@ -87,6 +87,7 @@ export const story = ( item, scene ) => {
   }
 } 
 
+// create lines
 export const line = ( item, scene ) => {
   const data = item.userData;
     // console.log('data', data)
@@ -98,7 +99,7 @@ export const line = ( item, scene ) => {
         item.position.y,
         item.position.z,
       );
-      
+
       // define the material
       const material = new THREE.LineBasicMaterial({color: blau})
       
@@ -116,9 +117,11 @@ export const line = ( item, scene ) => {
           // define a points array
           const pointsArr = [];
           
-          // set the origin point wuth this item's coordinates
+          // set the origin point with this item's coordinates
           pointsArr.push( originPoint );
           
+          // pointsArr.push( parentPoint );
+
           // get found item's coordinates
           pointsArr.push( new THREE.Vector3( 
             found.position.x,
@@ -128,10 +131,18 @@ export const line = ( item, scene ) => {
           
           // form the line
           const geometry = new THREE.BufferGeometry().setFromPoints(pointsArr);
-          const line = new THREE.Line( geometry, material);
-  
+          const newLine = new THREE.Line( geometry, material);
+          
+          newLine.translateX( newLine.position.x - item.position.x);
+          newLine.translateY( newLine.position.y - item.position.y);
+          newLine.translateZ( newLine.position.z - item.position.z);
+
+          // add to node?
+          item.add( newLine );
+          console.log( "familia", item.children); 
+          
           // add to scene
-          scene.add( line );
+          // scene.add( line );
 
         }
 
