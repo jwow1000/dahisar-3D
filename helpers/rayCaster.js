@@ -80,12 +80,12 @@ export function getHover( scene, camera ) {
       drawTitle( item );
 
       // hilight line connections
-      // console.log("itemed hovered", item);
       item.object.children.forEach((child, idx) => {
         
         // make full opaque, 1
         if( idx !== 0 ) {
           child.material.opacity = 1;
+          
         }
 
       });
@@ -106,11 +106,11 @@ export function getHover( scene, camera ) {
         const data = item.object.userData;
         
         // get the story title
-        const title = document.querySelector( "#story-title");
+        const title = document.querySelector( ".story-card-title");
         title.textContent = data.title;
         
         // get the story body
-        const body = document.querySelector( "#story-body");
+        const body = document.querySelector( ".story-card-body");
         body.textContent = data.body;
         
         // get the story card and reveal it

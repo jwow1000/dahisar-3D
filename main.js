@@ -17,14 +17,13 @@ if( WebGL.isWebGL2Available() ) {
 function init3D() {
   // get the stories
   const allStories = getStories();
-  // console.log("all storiees", allStories)
 
-  // get the loading screen and make it dissapear once the sketch is loaded
-  const loadingScreen = document.getElementById('loading-screen');
-  // function to hide
-  function hideLoadingScreen() {
-    loadingScreen.style.display = 'none';
-  }
+  // // get the loading screen and make it dissapear once the sketch is loaded
+  // const loadingScreen = document.getElementById('loading-screen');
+  // // function to hide
+  // function hideLoadingScreen() {
+  //   loadingScreen.style.display = 'none';
+  // }
 
   // define scene, camera, renderer
   const scene = new THREE.Scene();
@@ -89,7 +88,7 @@ function init3D() {
     
   }
   
-  hideLoadingScreen();
   renderer.setAnimationLoop( animate );
+  // hideLoadingScreen();
 
 }

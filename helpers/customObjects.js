@@ -7,7 +7,6 @@ const white = new THREE.Color("rgb(255,255,255)");
 
 
 export const story = ( item, scene ) => {
-  console.log("stroury item", item)
   // make the shape
   const geometry = new THREE.PlaneGeometry( 0.5, 0.5 );
   
@@ -61,10 +60,11 @@ export const story = ( item, scene ) => {
 
   }
 
+  // append to the div
   labelDiv.appendChild( titleDiv );
   labelDiv.appendChild( tagsDiv );
-  console.log( "check the label div", labelDiv);
   
+  // create the CSS object
   const label = new CSS2DObject( labelDiv );
   label.position.set(0, 0, 0); // Position the label below the plane
   // // style the label
@@ -90,7 +90,7 @@ export const story = ( item, scene ) => {
 // create lines
 export const line = ( item, scene ) => {
   const data = item.userData;
-    // console.log('data', data)
+    console.log('data', data)
     if( data.links ) {
       
       // define the origin
@@ -141,7 +141,7 @@ export const line = ( item, scene ) => {
           newLine.translateY( newLine.position.y - item.position.y);
           newLine.translateZ( newLine.position.z - item.position.z);
 
-          // add to node?
+          // add to node
           item.add( newLine );
           console.log( "familia", item.children); 
           
