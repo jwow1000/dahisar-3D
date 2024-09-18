@@ -4,7 +4,7 @@ import { randFloat } from 'three/src/math/MathUtils.js';
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
 const white = new THREE.Color("rgb(255,255,255)");
-import defaultImg from 'https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eb35c802a67c0c85bc0e69_Solid%20Goopy%20hexagon%20-%20plum.png';
+const defaultImg = 'https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eb35c802a67c0c85bc0e69_Solid%20Goopy%20hexagon%20-%20plum.png';
 
 export const story = ( item, scene ) => {
   // make the shape
