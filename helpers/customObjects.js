@@ -12,7 +12,7 @@ export const story = ( item, scene ) => {
   
   // image texture
   const texture = new THREE.TextureLoader().load(
-    () => item.cutout ? item.cutout : defaultImg
+    item.cutout ? item.cutout : defaultImg
   );
   texture.colorSpace = THREE.SRGBColorSpace;
 

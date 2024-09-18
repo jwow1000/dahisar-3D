@@ -20,6 +20,7 @@ function init3D() {
 
   // // get the loading screen and make it dissapear once the sketch is loaded
   // const loadingScreen = document.getElementById('loading-screen');
+  // we need to listen to the material renderering here too, becasue of all the pngs.
   // // function to hide
   // function hideLoadingScreen() {
   //   loadingScreen.style.display = 'none';
