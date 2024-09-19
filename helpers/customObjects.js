@@ -84,7 +84,9 @@ export const story = ( item, scene ) => {
     chapter: item.chapter,
     links: item.links,
     showTitle: false,
+    cardElem: item.cardElem,
   }
+
 } 
 
 // create lines

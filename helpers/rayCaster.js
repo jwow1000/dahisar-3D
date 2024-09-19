@@ -3,6 +3,7 @@ import * as THREE from "three";
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 let storyFocus = false;
+let currentStory = {};
 
 // raycaster options
 raycaster.far = 20;
@@ -95,40 +96,74 @@ export function getHover( scene, camera ) {
     }
   }
   
-  // add the click function to get the full story card
+  // // add the click function to get the full story card
+  // function handleClick() {
+  //   // if story isnt focused
+  //   if( !storyFocus ) {
+  //     // get the clicked item
+  //     const item = getIntersect();
+  //     if( item ) {
+  //       // get the data of the object
+  //       const data = item.object.userData;
+        
+  //       // get the story title
+  //       const title = document.querySelector( ".story-card-title");
+  //       title.textContent = data.title;
+        
+  //       // get the story body
+  //       const body = document.querySelector( ".story-card-body");
+  //       body.textContent = data.body;
+        
+  //       // get the story card and reveal it
+  //       clearAllPreviews();
+  //       const card = document.querySelector( '#story-card' );
+  //       card.style.display = 'block';
+  
+  //       // flip the focus variable
+  //       storyFocus = true;
+
+  //     }
+  //   } else if ( storyFocus ) {
+  //     const card = document.querySelector( '#story-card' );
+  //     card.style.display = "none";
+  //     storyFocus = false;
+  //   }
+
+  // }
+
+  // add the click function to show the webflow card
   function handleClick() {
     // if story isnt focused
     if( !storyFocus ) {
+      // just to be sure mute former focused card
+      if( currentStory.object ) {
+        currentStory.object.style.display = "none";
+      }
+
       // get the clicked item
       const item = getIntersect();
       if( item ) {
         // get the data of the object
         const data = item.object.userData;
         
-        // get the story title
-        const title = document.querySelector( ".story-card-title");
-        title.textContent = data.title;
-        
-        // get the story body
-        const body = document.querySelector( ".story-card-body");
-        body.textContent = data.body;
-        
         // get the story card and reveal it
         clearAllPreviews();
-        const card = document.querySelector( '#story-card' );
+        console.log("data: ", data)
+        const card = data.cardElem; 
         card.style.display = 'block';
   
         // flip the focus variable
         storyFocus = true;
+        currentStory = card;
+        console.log("current story: ", currentStory)
 
       }
     } else if ( storyFocus ) {
-      const card = document.querySelector( '#story-card' );
-      card.style.display = "none";
+      currentStory.style.display = "none";
       storyFocus = false;
     }
-
   }
+  
   
   document.addEventListener('mousemove', onPointerMove);
   document.addEventListener('click', handleClick );

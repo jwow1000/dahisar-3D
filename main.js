@@ -17,7 +17,7 @@ if( WebGL.isWebGL2Available() ) {
 function init3D() {
   // get the stories
   const allStories = getStories();
-  // console.log("the stories: ", allStories)
+  console.log("the stories: ", allStories)
   
   // // get the loading screen and make it dissapear once the sketch is loaded
   // const loadingScreen = document.getElementById('loading-screen');
