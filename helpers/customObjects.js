@@ -50,7 +50,6 @@ export const story = ( item, scene ) => {
     
     const tags = item.tags.replace(/\s/g, '').split(',');
     tags.forEach(( tag ) => {
-      console.log("is tags working?");
       // maybe have to make these links
       const div = document.createElement('div');
       div.className = 'story-tag'
@@ -67,6 +66,7 @@ export const story = ( item, scene ) => {
   // create the CSS object
   const label = new CSS2DObject( labelDiv );
   label.position.set(0, 0, 0); // Position the label below the plane
+  
   // // style the label
   // const styleMe = label.element.style;
   // styleMe.backgroundColor = "rgb(120,120,120)";
@@ -90,7 +90,6 @@ export const story = ( item, scene ) => {
 // create lines
 export const line = ( item, scene ) => {
   const data = item.userData;
-    console.log('data', data)
     if( data.links ) {
       
       // define the origin
@@ -124,8 +123,6 @@ export const line = ( item, scene ) => {
           // set the origin point with this item's coordinates
           pointsArr.push( originPoint );
           
-          // pointsArr.push( parentPoint );
-
           // get found item's coordinates
           pointsArr.push( new THREE.Vector3( 
             found.position.x,
@@ -143,11 +140,7 @@ export const line = ( item, scene ) => {
 
           // add to node
           item.add( newLine );
-          console.log( "familia", item.children); 
-          
-          // add to scene
-          // scene.add( line );
-
+        
         }
 
       });
