@@ -15,8 +15,8 @@ export function setControls( controls, camera ) {
   controls.zoomSpeed = 2.0; // Adjust zoom speed
 
   // Optional: Set min/max distances to control how far the camera can zoom
-  controls.minDistance = 1; // Minimum zoom distance
-  controls.maxDistance = 10; // Maximum zoom distance
+  controls.minDistance = 5; // Minimum zoom distance
+  controls.maxDistance = 20; // Maximum zoom distance
 
   // Damping (smooth movement)
   controls.enableDamping = true;
@@ -37,7 +37,7 @@ export function setControls( controls, camera ) {
   };
 
   // start camera position
-  camera.position.z = 6;
+  camera.position.z = 15;
 
   // add event listener to clamp panning
   controls.addEventListener( 'change', e => {

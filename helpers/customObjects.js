@@ -4,11 +4,11 @@ import { randFloat } from 'three/src/math/MathUtils.js';
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
 const white = new THREE.Color("rgb(255,255,255)");
-const defaultImg = 'https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eb35c802a67c0c85bc0e69_Solid%20Goopy%20hexagon%20-%20plum.png';
+const defaultImg = 'https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eca12c7d639e4980f73ce3_3.2i_Cutout.png';
 
 export const story = ( item, scene ) => {
   // make the shape
-  const geometry = new THREE.PlaneGeometry( 0.5, 0.5 );
+  const geometry = new THREE.PlaneGeometry( 1, 1 );
   
   // image texture
   const texture = new THREE.TextureLoader().load(
@@ -25,9 +25,9 @@ export const story = ( item, scene ) => {
   scene.add( node );
 
   const rand = {
-    x: randFloat( -6, 6 ),
-    y: randFloat( -6, 6 ),
-    z: randFloat( -6, 0 ),
+    x: randFloat( -10, 10 ),
+    y: randFloat( -10, 10 ),
+    z: randFloat( 0, 15 ),
   }
 
   // Create a 2D label
