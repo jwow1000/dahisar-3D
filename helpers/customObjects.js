@@ -8,7 +8,7 @@ const defaultImg = 'https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/
 
 export const story = ( item, scene ) => {
   // make the shape
-  const geometry = new THREE.PlaneGeometry( 1, 1 );
+  const geometry = new THREE.PlaneGeometry( 2, 2 );
   
   // image texture
   const texture = new THREE.TextureLoader().load(
@@ -45,10 +45,12 @@ export const story = ( item, scene ) => {
   // tag data
   tagsDiv.className = 'story-tags-container';
 
-  // get the string and turn into an array
+  // if thre's tags get them
   if( item.tags ) {
     
+    // get the string and turn into an array
     const tags = item.tags.replace(/\s/g, '').split(',');
+    
     tags.forEach(( tag ) => {
       // maybe have to make these links
       const div = document.createElement('div');
