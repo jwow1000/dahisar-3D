@@ -75,8 +75,6 @@ export const story = ( item, scene ) => {
   label.visible = false;
   node.add( label );
 
-
-
   node.position.set( rand.x, rand.y, rand.z);
   
   node.userData = {
@@ -86,6 +84,7 @@ export const story = ( item, scene ) => {
     chapter: item.chapter,
     links: item.links,
     showTitle: false,
+    slug: item.slug,
     cardElem: item.cardElem,
   }
 

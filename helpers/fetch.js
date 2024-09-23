@@ -20,6 +20,7 @@ export function getStories() {
       links: item.getAttribute('data-links'),
       chapter: item.getAttribute('data-chapter'),
       cutout: item.getAttribute('data-cutout'),
+      slug: item.getAttribute('data-slug'),
       cardElem: {},
     }
 
