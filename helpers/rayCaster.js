@@ -9,7 +9,7 @@ let startX = 0;
 let startY = 0;
 
 // raycaster options
-raycaster.far = 20;
+raycaster.far = 30;
 
 
 export function getHover( scene, camera ) {
@@ -38,7 +38,7 @@ export function getHover( scene, camera ) {
       // return opacity back to 70%
       child.children.forEach((item, idx) => {
         if( idx > 0 ) {
-          item.material.opacity = 0.5;
+          item.material.linewidth = 2;
         }
       });
 
@@ -88,7 +88,7 @@ export function getHover( scene, camera ) {
         
         // make full opaque, 1
         if( idx !== 0 ) {
-          child.material.opacity = 1;
+          child.material.linewidth = 6;
           
         }
 
@@ -107,7 +107,7 @@ export function getHover( scene, camera ) {
   function clearSlug() {
     const path = window.location.pathname;
     window.history.pushState( '','', path);
-    console.log("pather", path)
+    // console.log("pather", path)
   }
 
 
@@ -177,7 +177,7 @@ export function getHover( scene, camera ) {
   
     if( diffX > dragThresh || diffY > dragThresh ) {
       isDragging = true;
-      console.log("we dragging");
+      // console.log("we dragging");
     }
   
   });

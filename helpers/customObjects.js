@@ -1,12 +1,18 @@
 import * as THREE from 'three';
+import { Line2 } from 'three/examples/jsm/lines/Line2.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import { randFloat } from 'three/src/math/MathUtils.js';
+import { randomColor, randStreamPosition, getRandStream } from './random.js';
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
 const white = new THREE.Color("rgb(255,255,255)");
 const defaultImg = 'https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eca12c7d639e4980f73ce3_3.2i_Cutout.png';
+const theStream = getRandStream(0, 124);
 
-export const story = ( item, scene ) => {
+
+export const story = ( item, scene, idx ) => {
   // make the shape
   const geometry = new THREE.PlaneGeometry( 2, 2 );
   
@@ -23,12 +29,14 @@ export const story = ( item, scene ) => {
   const node = new THREE.Mesh( geometry, material );
   
   scene.add( node );
-
-  const rand = {
-    x: randFloat( -10, 10 ),
-    y: randFloat( -10, 10 ),
-    z: randFloat( 0, 15 ),
-  }
+  // random positon genrator no overlap
+  const rand = randStreamPosition( theStream, idx);
+  
+  // const rand = {
+  //   x: randFloat( -10, 10 ),
+  //   y: randFloat( -10, 10 ),
+  //   z: randFloat( 0, 15 ),
+  // }
 
   // Create a 2D label
   const labelDiv = document.createElement('div');
@@ -103,10 +111,14 @@ export const line = ( item, scene ) => {
       );
 
       // define the material
-      const material = new THREE.LineBasicMaterial({
-        color: blau, 
-        opacity: 0.5,
-        transparent: true,
+      // get a random color
+      const randoRGB = randomColor(); 
+      console.log("uggh", randoRGB)
+      const material = new LineMaterial({
+        color: randoRGB, 
+        // opacity: 0.5,
+        linewidth: 2,
+        // transparent: true,
       })
       
       // define the points, origin(this items position), end(the connections)
@@ -124,18 +136,21 @@ export const line = ( item, scene ) => {
           const pointsArr = [];
           
           // set the origin point with this item's coordinates
-          pointsArr.push( originPoint );
+          pointsArr.push( ...originPoint );
           
           // get found item's coordinates
-          pointsArr.push( new THREE.Vector3( 
-            found.position.x,
-            found.position.y,
-            found.position.z,
-          ));
+          pointsArr.push( 
+              found.position.x,
+              found.position.y,
+              found.position.z,
+          
+          );
           
           // form the line
-          const geometry = new THREE.BufferGeometry().setFromPoints(pointsArr);
-          const newLine = new THREE.Line( geometry, material);
+          const geometry = new LineGeometry();
+          geometry.setPositions( pointsArr );
+          // const geometry = new THREE.BufferGeometry().setFromPoints(pointsArr);
+          const newLine = new Line2( geometry, material );
           
           newLine.translateX( newLine.position.x - item.position.x);
           newLine.translateY( newLine.position.y - item.position.y);

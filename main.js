@@ -55,8 +55,8 @@ function init3D() {
   setControls( controls, camera );
   
   // create the stories
-  allStories.map((item) => {
-    story( item, scene );
+  allStories.map((item, idx) => {
+    story( item, scene, idx );
   });
 
   // render the labels 
