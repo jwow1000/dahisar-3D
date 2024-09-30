@@ -32,12 +32,6 @@ export const story = ( item, scene, idx ) => {
   // random positon genrator no overlap
   const rand = randStreamPosition( theStream, idx);
   
-  // const rand = {
-  //   x: randFloat( -10, 10 ),
-  //   y: randFloat( -10, 10 ),
-  //   z: randFloat( 0, 15 ),
-  // }
-
   // Create a 2D label
   const labelDiv = document.createElement('div');
   const titleDiv = document.createElement('div');
@@ -81,6 +75,7 @@ export const story = ( item, scene, idx ) => {
   // const styleMe = label.element.style;
   // styleMe.backgroundColor = "rgb(120,120,120)";
   label.visible = false;
+
   node.add( label );
 
   node.position.set( rand.x, rand.y, rand.z);

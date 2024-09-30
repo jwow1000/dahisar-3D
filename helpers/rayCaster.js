@@ -177,7 +177,6 @@ export function getHover( scene, camera ) {
   
     if( diffX > dragThresh || diffY > dragThresh ) {
       isDragging = true;
-      // console.log("we dragging");
     }
   
   });
