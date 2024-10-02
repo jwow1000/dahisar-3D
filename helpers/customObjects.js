@@ -31,18 +31,24 @@ export const story = (item, scene, idx) => {
   loader.load(
     item.cutout ? item.cutout : defaultImg,
     (texture) => {
+      // declare color mode
       texture.colorSpace = THREE.SRGBColorSpace;
+      
       if (texture.image) {
         // Get the image dimensions from the texture
         const imageWidth = texture.image.width;
         const imageHeight = texture.image.height;
-
+        
         // get aspect ratio
         const aspectRatio = imageWidth / imageHeight;
         const desiredHeight = 2;
         const desiredWidth = desiredHeight * aspectRatio;
-        geometry.width = desiredWidth;
-        geometry.height = desiredHeight;
+        
+        // Replace the geometry with the new size
+        node.geometry.dispose(); // Dispose of the old geometry
+        node.geometry = new THREE.PlaneGeometry(desiredWidth, desiredHeight);
+
+        geometry.verticesNeedUpdate = true;
 
         material.map = texture;
         material.needsUpdate = true; // Ensure material updates after texture is applied
