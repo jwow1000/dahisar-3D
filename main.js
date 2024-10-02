@@ -8,18 +8,20 @@ import { getHover } from './helpers/rayCaster';
 
 // check for webgl 2
 if( WebGL.isWebGL2Available() ) {
+  
   init3D();
+
 } else {
   // maybe a better fallback here?
   console.log("you dont have openGL2");
 }
 
-function init3D() {
-  // get the stories
-  const allStories = getStories();
-  console.log("the stories: ", allStories)
-  
-  
+async function init3D() {
+  // console.log("the stories: ", allStories)
+  const allStories = await getStories();
+  console.log("check story data", allStories);
+  // Set up the CSS2DRenderer
+  const labelRenderer = new CSS2DRenderer();
   
   // // get the loading screen and make it dissapear once the sketch is loaded
   // const loadingScreen = document.getElementById('loading-screen');
@@ -54,27 +56,32 @@ function init3D() {
   // customize the Orbit Controls
   setControls( controls, camera );
   
-  // create the stories
+  // create the stories, labels, lines
   allStories.map((item, idx) => {
     story( item, scene, idx );
-  });
+  })
+        
+  console.log("rendering lines...", scene.children)
 
+  // create the lines
+  scene.children.map((item, idx) => {
+    console.log("check out the lines: ", item)
+    if( idx > 0 ) {
+      line( item, scene );
+    }
+  })
+
+  console.log("check the scene for the stories: ", scene.children)
+  
   // render the labels 
-  // Set up the CSS2DRenderer
-  const labelRenderer = new CSS2DRenderer();
+  console.log("rendering the label")
   labelRenderer.setSize(window.innerWidth, window.innerHeight);
   labelRenderer.domElement.style.position = 'absolute';
   labelRenderer.domElement.style.top = '0';
   labelRenderer.domElement.style.pointerEvents = 'none'; // Ensures that labels don't interfere with mouse events
   viewport.appendChild( labelRenderer.domElement );
-
-  // create the lines
-  scene.children.map((item, idx) => {
-    // console.log("check out the lines: ", item)
-    if( idx > 0 ) {
-      line( item, scene );
-    }
-  })
+  
+        
 
   getHover( scene, camera );
 

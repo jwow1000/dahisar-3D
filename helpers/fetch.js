@@ -1,12 +1,11 @@
 
-export function getStories() {
+export async function getStories() {
   // get the cms data from the webflow page collections item
   console.log("document: ", document)
   
   const cmsItems = document.querySelectorAll('.cms-items-3D');
   const divCards = document.querySelectorAll('.class-story-cards');
   
-  console.log("wtf", cmsItems, divCards)
   // Initialize an array to hold all the stories
   const allStories = [];
 
@@ -41,6 +40,5 @@ export function getStories() {
 
   });
   
-  console.log("allSrotrries", allStories)
   return allStories
 }
