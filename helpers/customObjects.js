@@ -4,6 +4,7 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { CSS2DObject } from "three/examples/jsm/Addons.js";
 import { randomColor, randStreamPosition, getRandStream } from "./random.js";
+import { grayscaleShader } from "./shaders.js";
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
 const white = new THREE.Color("rgb(255,255,255)");
@@ -15,10 +16,42 @@ export const story = (item, scene, idx) => {
   // make the geometry for new story
   const geometry = new THREE.PlaneGeometry(2, 2);
   
-  // make the material
-  const material = new THREE.MeshBasicMaterial({
-    transparent: true,
+  // make the shader material
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      u_texture: { value: null }, // Texture to be assigned per element
+      u_grayScale: { value: 1.0 } // 1.0 for grayscale, 0.0 for full color
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D u_texture;
+      uniform float u_grayScale;
+      varying vec2 vUv;
+
+      void main() {
+        vec4 color = texture2D(u_texture, vUv);
+
+        // Grayscale effect
+        float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+        vec3 grayscaleColor = vec3(gray);
+
+        // Blend between grayscale and full color
+        gl_FragColor = vec4(mix(grayscaleColor, color.rgb, u_grayScale), color.a);
+      }
+ 
+    `,
+    transparent: true, // Allow for transparency
   });
+  
+  // const material = new THREE.MeshBasicMaterial({
+  //   transparent: true,
+  // });
 
   // make the node
   const node = new THREE.Mesh(geometry, material);
@@ -38,8 +71,6 @@ export const story = (item, scene, idx) => {
         // Get the image dimensions from the texture
         const imageWidth = texture.image.width;
         const imageHeight = texture.image.height;
-        
-        // get aspect ratio
         const aspectRatio = imageWidth / imageHeight;
         const desiredHeight = 2;
         const desiredWidth = desiredHeight * aspectRatio;
@@ -49,11 +80,15 @@ export const story = (item, scene, idx) => {
         node.geometry = new THREE.PlaneGeometry(desiredWidth, desiredHeight);
 
         geometry.verticesNeedUpdate = true;
-
-        material.map = texture;
+        
+        // Apply the texture to the shader material
+        material.uniforms.u_texture.value = texture;
+        material.uniforms.u_grayScale.value = 0;
         material.needsUpdate = true; // Ensure material updates after texture is applied
-
+        
         node.visible = true;
+
+
       }
     },
     undefined,
@@ -76,14 +111,14 @@ export const story = (item, scene, idx) => {
   const tagsDiv = document.createElement("div");
 
   // label container data
-  labelDiv.className = "story-container-preview";
+  labelDiv.className = "preview-card";
 
   // title data
-  titleDiv.className = "story-title-preview";
+  titleDiv.className = "preview-title";
   titleDiv.textContent = item.title;
 
   // tag data
-  tagsDiv.className = "story-tags-container";
+  tagsDiv.className = "preview-tags-cont";
 
   // if thre's tags get them
   if (item.tags) {
@@ -93,7 +128,7 @@ export const story = (item, scene, idx) => {
     tags.forEach((tag) => {
       // maybe have to make these links
       const div = document.createElement("div");
-      div.className = "story-tag";
+      div.className = "preview-tag";
       div.textContent = tag;
       tagsDiv.appendChild(div);
     });
@@ -126,6 +161,7 @@ export const story = (item, scene, idx) => {
     slug: item.slug,
     cardElem: item.cardElem,
   };
+
 };
 
 // create lines

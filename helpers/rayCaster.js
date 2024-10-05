@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { gsap } from "gsap";
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -7,6 +8,7 @@ let currentStory = {};
 let isDragging = false;
 let startX = 0; 
 let startY = 0;
+let lastHover = {};
 
 // raycaster options
 raycaster.far = 30;
@@ -31,10 +33,12 @@ export function getHover( scene, camera ) {
   // clear all titles
   function clearAllPreviews() {
     scene.children.forEach(( child ) => {
+      
       // clear the preview
       if( child.type !== "Line" ) {
         child.children[0].visible = false;
       } 
+
       // return opacity back to 70%
       child.children.forEach((item, idx) => {
         if( idx > 0 ) {
@@ -81,7 +85,12 @@ export function getHover( scene, camera ) {
     const item = getIntersect();
     
     if( item ) {
+      lastHover = item;
+
       drawTitle( item );
+      
+      // make item color
+      gsap.to( item.object.material.uniforms.u_grayScale, { value: 1.0, duration: 1.5 } );
 
       // hilight line connections
       item.object.children.forEach((child, idx) => {
@@ -89,12 +98,12 @@ export function getHover( scene, camera ) {
         // make full opaque, 1
         if( idx !== 0 ) {
           child.material.linewidth = 6;
-          
         }
 
       });
 
-    } else {
+    } else if ( lastHover.object ) {
+      gsap.to( lastHover.object.material.uniforms.u_grayScale, { value: 0.0, duration: 1 } );
       clearAllPreviews();
     }
   }

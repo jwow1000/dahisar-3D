@@ -5,6 +5,7 @@ import { getStories } from './helpers/fetch';
 import { story, line } from './helpers/customObjects';
 import { setControls } from './helpers/controlsSetup';
 import { getHover } from './helpers/rayCaster';
+import { grayscaleShader } from './helpers/shaders.js';
 
 // check for webgl 2
 if( WebGL.isWebGL2Available() ) {
@@ -17,12 +18,19 @@ if( WebGL.isWebGL2Available() ) {
 }
 
 async function init3D() {
-  // console.log("the stories: ", allStories)
+  // get the story data
   const allStories = await getStories();
-  console.log("check story data", allStories);
+  // console.log("check story data", allStories);
+  
   // Set up the CSS2DRenderer
   const labelRenderer = new CSS2DRenderer();
   
+  // for dev purposes get the story card and prview element in webfloe and make them dissapear
+  const webflowStory = document.getElementById("story-template");
+  const webflowPreview = document.getElementById("preview-template");
+  webflowPreview.style.display = "none"
+  webflowStory.style.display = "none"
+
   // // get the loading screen and make it dissapear once the sketch is loaded
   // const loadingScreen = document.getElementById('loading-screen');
   // we need to listen to the material renderering here too, becasue of all the pngs.
@@ -44,7 +52,7 @@ async function init3D() {
   
   
   // const viewport = document.querySelector(['data-id="3Js-canvas"'])
-  const viewport = document.getElementById('three-js-canvas');
+  const viewport = document.querySelector('.three-js-canvas');
   viewport.appendChild( renderer.domElement );
   
   // custom panning
