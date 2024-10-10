@@ -94,6 +94,7 @@ export function getHover( scene, camera, animateGo ) {
       drawTitle( item );
       
       // make item color
+      
       gsap.to( item.object.material.uniforms.u_grayScale, { value: 1.0, duration: 1.5 } );
 
       // hilight line connections
@@ -112,6 +113,7 @@ export function getHover( scene, camera, animateGo ) {
       animateGo.value = true;
     }
   }
+  
   // function to update slug URL
   function updateURL( storySlug ) {
     const newURL = `${window.location.pathname}?story=${storySlug}`;
@@ -207,10 +209,14 @@ export function getHover( scene, camera, animateGo ) {
   });
   
   // Optionally listen for mouseleave to reset when the cursor leaves the document
-  document.addEventListener('mouseleave', () => {
+  document.addEventListener('mouseout', () => {
+    
     if ( isDragging ) {
       isDragging = false;
     }
+    
+    // also deactivate the hover effects
+    clearAllPreviews();
   });
 
   // find node by slug

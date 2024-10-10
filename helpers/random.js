@@ -38,7 +38,7 @@ export function randStreamPosition( stream ) {
   const obj = {};
   
 
-  obj.x = ((stream % 20) * 2) - 20;        
+  obj.x = ((stream % 10) * 4) - 20;        
   obj.y = (Math.floor( (stream % 25 / 5 ) ) * 4) - 10;
   obj.z = (Math.floor( (stream / 25) ) * 2) + 3;
 

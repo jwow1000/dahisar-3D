@@ -10,12 +10,12 @@ const blau = new THREE.Color("rgb(25,255,255,0.1)");
 const white = new THREE.Color("rgb(255,255,255)");
 const defaultImg =
   "https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eca12c7d639e4980f73ce3_3.2i_Cutout.png";
-const theStream = getRandStream(0, 200);
+const theStream = getRandStream(0, 127);
 
 export const story = (item, scene, idx) => {
   // make the geometry for new story
   const geometry = new THREE.PlaneGeometry(2, 2);
-  
+
   // make the shader material
   const material = new THREE.ShaderMaterial({
     uniforms: {
@@ -23,7 +23,7 @@ export const story = (item, scene, idx) => {
       u_grayScale: { value: 1.0 }, // 1.0 for grayscale, 0.0 for full color
       u_brightness: { value: 1 }, // turn up brightness
       u_saturation: { value: 1 },
-      u_contrast: { value: 1 } 
+      u_contrast: { value: 1 },
     },
     vertexShader: `
       varying vec2 vUv;
@@ -35,26 +35,24 @@ export const story = (item, scene, idx) => {
     fragmentShader: `
       uniform sampler2D u_texture;
       uniform float u_grayScale;
-      uniform float u_brightness;
-      uniform float u_saturation; 
-      uniform float u_contrast; 
       varying vec2 vUv;
 
       void main() {
         vec4 color = texture2D(u_texture, vUv);
-
-        // Grayscale effect
-        float gray = dot(color.rgb, vec3( 0.5, 0.5, 0.5 ));
-        vec3 grayscaleColor = vec3(gray);
+    
+        // Apply brightness (use a smaller value to prevent over-brightening)
+        vec3 finalColor = color.rgb + vec3(0.2);  // Small increment for brightness
         
-        // Apply desaturation (blend color with grayscale)
-        vec3 desaturatedColor = mix(grayscaleColor, color.rgb, u_saturation);
-
-        // Apply brightness
-        vec3 brightenedColor = desaturatedColor * u_brightness;
-
         // Apply contrast
-        vec3 finalColor = ((brightenedColor - 0.5) * u_contrast + 0.5);
+        finalColor = (finalColor - 0.5) * 1.3 + 0.5;  // Adjust contrast
+        
+        // Ensure the final color values are within the [0.0, 1.0] range
+        finalColor = clamp(finalColor, 0.0, 1.0);  // Prevent values from exceeding
+        
+        // Grayscale effect
+        float gray = dot(finalColor, vec3(0.299, 0.587, 0.114));  // Use proper luminance values
+        gray = max(gray, 0.05);  // Ensure grayscale doesn't drop below a minimum value
+        vec3 grayscaleColor = vec3(gray);
 
         // Blend between grayscale and full color
         gl_FragColor = vec4(mix(grayscaleColor, finalColor, u_grayScale), color.a);
@@ -63,7 +61,7 @@ export const story = (item, scene, idx) => {
     `,
     transparent: true, // Allow for transparency
   });
-  
+
   // const material = new THREE.MeshBasicMaterial({
   //   transparent: true,
   // });
@@ -71,7 +69,7 @@ export const story = (item, scene, idx) => {
   // make the node
   const node = new THREE.Mesh(geometry, material);
   node.visible = false;
-  
+
   // image texture
   const loader = new THREE.TextureLoader();
 
@@ -81,7 +79,7 @@ export const story = (item, scene, idx) => {
     (texture) => {
       // declare color mode
       texture.colorSpace = THREE.SRGBColorSpace;
-      
+
       if (texture.image) {
         // Get the image dimensions from the texture
         const imageWidth = texture.image.width;
@@ -89,21 +87,19 @@ export const story = (item, scene, idx) => {
         const aspectRatio = imageWidth / imageHeight;
         const desiredHeight = 2;
         const desiredWidth = desiredHeight * aspectRatio;
-        
+
         // Replace the geometry with the new size
         node.geometry.dispose(); // Dispose of the old geometry
         node.geometry = new THREE.PlaneGeometry(desiredWidth, desiredHeight);
 
         geometry.verticesNeedUpdate = true;
-        
+
         // Apply the texture to the shader material
         material.uniforms.u_texture.value = texture;
         material.uniforms.u_grayScale.value = 0;
         material.needsUpdate = true; // Ensure material updates after texture is applied
-        
+
         node.visible = true;
-
-
       }
     },
     undefined,
@@ -111,14 +107,12 @@ export const story = (item, scene, idx) => {
       console.error("An error occurred loading the texture", error);
     }
   );
-  
-
 
   // add the story to the scene
   scene.add(node);
 
   // random positon genrator no overlap
-  const rand = randStreamPosition( theStream[ idx ] );
+  const rand = randStreamPosition(theStream[idx]);
   console.log("random position: ", rand);
 
   // Create a 2D label
@@ -156,7 +150,7 @@ export const story = (item, scene, idx) => {
 
   // create the CSS object
   const label = new CSS2DObject(labelDiv);
-  label.position.set(0, 1, 0); // Position the label below the plane
+  label.position.set(-2, -0.5, 0); // Position the label below the plane
 
   // // style the label
   // const styleMe = label.element.style;
@@ -177,7 +171,6 @@ export const story = (item, scene, idx) => {
     slug: item.slug,
     cardElem: item.cardElem,
   };
-
 };
 
 // create lines

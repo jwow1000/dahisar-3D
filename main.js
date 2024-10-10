@@ -21,7 +21,7 @@ async function init3D() {
   const allStories = await getStories();
   // console.log("check story data", allStories);
   const animateGo = {
-    value: false
+    value: true
   };
   
   // Set up the CSS2DRenderer
@@ -58,9 +58,6 @@ async function init3D() {
   // const viewport = document.querySelector(['data-id="3Js-canvas"'])
   const viewport = document.querySelector('.three-js-canvas');
   viewport.appendChild( renderer.domElement );
-  
-  // custom panning
-  // panIt( camera, viewport );
   
   // orbit controls
   const controls = new OrbitControls(camera, renderer.domElement);
