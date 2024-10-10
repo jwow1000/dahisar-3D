@@ -8,14 +8,13 @@ let currentStory = {};
 let isDragging = false;
 let startX = 0; 
 let startY = 0;
-let lastHover = {};
 
 // raycaster options
 raycaster.far = 30;
 
 
-export function getHover( scene, camera ) {
-
+export function getHover( scene, camera, animateGo ) {
+  
   function onPointerMove( event ) {
     // calculate pointer position in normalized device coordinates
     // (-1 to +1) for both components
@@ -38,6 +37,9 @@ export function getHover( scene, camera ) {
       if( child.type !== "Line" ) {
         child.children[0].visible = false;
       } 
+      
+      // return all to gray
+      gsap.to( child.material.uniforms.u_grayScale, { value: 0.0, duration: 1 } );
 
       // return opacity back to 70%
       child.children.forEach((item, idx) => {
@@ -45,6 +47,7 @@ export function getHover( scene, camera ) {
           item.material.linewidth = 2;
         }
       });
+
 
     })
   }
@@ -85,7 +88,8 @@ export function getHover( scene, camera ) {
     const item = getIntersect();
     
     if( item ) {
-      lastHover = item;
+      // stop animation
+      animateGo.value = false;
 
       drawTitle( item );
       
@@ -102,9 +106,10 @@ export function getHover( scene, camera ) {
 
       });
 
-    } else if ( lastHover.object ) {
-      gsap.to( lastHover.object.material.uniforms.u_grayScale, { value: 0.0, duration: 1 } );
+    } else  {
       clearAllPreviews();
+      // re-start animation
+      animateGo.value = true;
     }
   }
   // function to update slug URL
@@ -155,6 +160,8 @@ export function getHover( scene, camera ) {
         currentStory.object.style.display = "none";
       }
       
+      animateGo.value = false;
+
       // get the clicked item
       const item = getIntersect();
       

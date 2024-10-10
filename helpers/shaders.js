@@ -17,7 +17,8 @@ export const grayscaleShader = {
     void main() {
       vec4 color = texture2D(u_texture, vUv);
       // Calculate grayscale using luminance formula
-      float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+      // float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+      float gray = dot(color.rgb, vec3(0.399, 0.687, 0.314));
       // Mix grayscale and color based on u_grayScale uniform
       vec3 finalColor = mix(vec3(gray), color.rgb, u_grayScale);
       gl_FragColor = vec4(finalColor, color.a); // Preserve alpha channel for transparency

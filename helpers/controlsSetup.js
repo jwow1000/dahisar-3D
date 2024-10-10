@@ -15,7 +15,7 @@ export function setControls( controls, camera ) {
   controls.zoomSpeed = 2.0; // Adjust zoom speed
 
   // Optional: Set min/max distances to control how far the camera can zoom
-  controls.minDistance = 2; // Minimum zoom distance
+  controls.minDistance = 10; // Minimum zoom distance
   controls.maxDistance = 20; // Maximum zoom distance
 
   // Damping (smooth movement)
@@ -44,9 +44,9 @@ export function setControls( controls, camera ) {
     const x = controls.target.x;
     const y = controls.target.y;
 
-    if( x < -10 || x > 10 ) {
-      controls.target.setX( x < -10 ? -10 : 10 );
-      camera.position.setX( x < -10 ? -10 : 10 );
+    if( x < -20 || x > 20 ) {
+      controls.target.setX( x < -20 ? -20 : 20 );
+      camera.position.setX( x < -20 ? -20 : 20 );
     } else if(  y < -10 || y > 10 ) {
       controls.target.setY( y < -10 ? -10 : 10 );
       camera.position.setY( y < -10 ? -10 : 10 );

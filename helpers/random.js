@@ -33,14 +33,14 @@ export function getRandStream(min, max) {
 // get random position but no repeats in a grid
 // the width (in world units) of the preview elements are 2X2 squares
 // divide world into something more like 5x5x5 cubes
-export function randStreamPosition( stream, idx ) {
+// need to make this wider and shallower
+export function randStreamPosition( stream ) {
   const obj = {};
   
-  const zMod = 
 
-  obj.x = ((stream[idx] % 5) * 4) - 10;        
-  obj.y = (Math.floor( (stream[idx] % 25 / 5 ) ) * 4) - 10;
-  obj.z = (Math.floor( (stream[idx] / 25) ) * 4) - 10;
+  obj.x = ((stream % 20) * 2) - 20;        
+  obj.y = (Math.floor( (stream % 25 / 5 ) ) * 4) - 10;
+  obj.z = (Math.floor( (stream / 25) ) * 2) + 3;
 
   return obj;
 }

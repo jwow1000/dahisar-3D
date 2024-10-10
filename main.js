@@ -5,7 +5,6 @@ import { getStories } from './helpers/fetch';
 import { story, line } from './helpers/customObjects';
 import { setControls } from './helpers/controlsSetup';
 import { getHover } from './helpers/rayCaster';
-import { grayscaleShader } from './helpers/shaders.js';
 
 // check for webgl 2
 if( WebGL.isWebGL2Available() ) {
@@ -21,6 +20,9 @@ async function init3D() {
   // get the story data
   const allStories = await getStories();
   // console.log("check story data", allStories);
+  const animateGo = {
+    value: false
+  };
   
   // Set up the CSS2DRenderer
   const labelRenderer = new CSS2DRenderer();
@@ -46,6 +48,8 @@ async function init3D() {
     antialias: true,
     alpha: true
   });
+  // Create a clock for global animation
+  const clock = new THREE.Clock();
 
   renderer.setClearColor(0x000000, 0); // 0 is fully transparent
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -73,29 +77,40 @@ async function init3D() {
 
   // create the lines
   scene.children.map((item, idx) => {
-    console.log("check out the lines: ", item)
+    
     if( idx > 0 ) {
       line( item, scene );
     }
   })
 
-  console.log("check the scene for the stories: ", scene.children)
-  
   // render the labels 
-  console.log("rendering the label")
   labelRenderer.setSize(window.innerWidth, window.innerHeight);
   labelRenderer.domElement.style.position = 'absolute';
   labelRenderer.domElement.style.top = '0';
   labelRenderer.domElement.style.pointerEvents = 'none'; // Ensures that labels don't interfere with mouse events
   viewport.appendChild( labelRenderer.domElement );
   
-        
-
-  getHover( scene, camera );
-
+  // raycaster
+  getHover( scene, camera, animateGo );
+  
   // animation loop
   function animate() { 
-    
+    // console.log("animate status: ", animateGo)
+    // get elapsed time
+    if( animateGo.value === true ) {
+
+      const elapsedTime = clock.getElapsedTime();
+      // pan camera
+      const animateTime = elapsedTime * 0.01;
+      const sine =  Math.sin( animateTime ) * 0.001;
+      const cos = Math.cos( animateTime ) * 0.001;
+      camera.position.x +=  sine;
+      controls.target.x += sine;
+      camera.position.y +=  cos;
+      controls.target.y += cos;
+    }
+
+
     // render the CSS labels
     labelRenderer.render(scene, camera);
     

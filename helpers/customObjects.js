@@ -10,7 +10,7 @@ const blau = new THREE.Color("rgb(25,255,255,0.1)");
 const white = new THREE.Color("rgb(255,255,255)");
 const defaultImg =
   "https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eca12c7d639e4980f73ce3_3.2i_Cutout.png";
-const theStream = getRandStream(0, 124);
+const theStream = getRandStream(0, 200);
 
 export const story = (item, scene, idx) => {
   // make the geometry for new story
@@ -20,7 +20,10 @@ export const story = (item, scene, idx) => {
   const material = new THREE.ShaderMaterial({
     uniforms: {
       u_texture: { value: null }, // Texture to be assigned per element
-      u_grayScale: { value: 1.0 } // 1.0 for grayscale, 0.0 for full color
+      u_grayScale: { value: 1.0 }, // 1.0 for grayscale, 0.0 for full color
+      u_brightness: { value: 1 }, // turn up brightness
+      u_saturation: { value: 1 },
+      u_contrast: { value: 1 } 
     },
     vertexShader: `
       varying vec2 vUv;
@@ -32,17 +35,29 @@ export const story = (item, scene, idx) => {
     fragmentShader: `
       uniform sampler2D u_texture;
       uniform float u_grayScale;
+      uniform float u_brightness;
+      uniform float u_saturation; 
+      uniform float u_contrast; 
       varying vec2 vUv;
 
       void main() {
         vec4 color = texture2D(u_texture, vUv);
 
         // Grayscale effect
-        float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+        float gray = dot(color.rgb, vec3( 0.5, 0.5, 0.5 ));
         vec3 grayscaleColor = vec3(gray);
+        
+        // Apply desaturation (blend color with grayscale)
+        vec3 desaturatedColor = mix(grayscaleColor, color.rgb, u_saturation);
+
+        // Apply brightness
+        vec3 brightenedColor = desaturatedColor * u_brightness;
+
+        // Apply contrast
+        vec3 finalColor = ((brightenedColor - 0.5) * u_contrast + 0.5);
 
         // Blend between grayscale and full color
-        gl_FragColor = vec4(mix(grayscaleColor, color.rgb, u_grayScale), color.a);
+        gl_FragColor = vec4(mix(grayscaleColor, finalColor, u_grayScale), color.a);
       }
  
     `,
@@ -103,7 +118,8 @@ export const story = (item, scene, idx) => {
   scene.add(node);
 
   // random positon genrator no overlap
-  const rand = randStreamPosition(theStream, idx);
+  const rand = randStreamPosition( theStream[ idx ] );
+  console.log("random position: ", rand);
 
   // Create a 2D label
   const labelDiv = document.createElement("div");
@@ -140,7 +156,7 @@ export const story = (item, scene, idx) => {
 
   // create the CSS object
   const label = new CSS2DObject(labelDiv);
-  label.position.set(0, 0, 0); // Position the label below the plane
+  label.position.set(0, 1, 0); // Position the label below the plane
 
   // // style the label
   // const styleMe = label.element.style;
@@ -166,7 +182,6 @@ export const story = (item, scene, idx) => {
 
 // create lines
 export const line = (item, scene) => {
-  console.log("ladiiess", item);
   const data = item.userData;
   if (data.links) {
     // define the origin
