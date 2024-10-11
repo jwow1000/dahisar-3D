@@ -92,6 +92,11 @@ async function init3D() {
   
   // animation loop
   function animate() { 
+    
+    requestAnimationFrame( animate );
+
+    renderer.render( scene, camera);
+    
     // console.log("animate status: ", animateGo)
     // get elapsed time
     if( animateGo.value === true ) {
@@ -112,14 +117,16 @@ async function init3D() {
     labelRenderer.render(scene, camera);
     
     // render the 3d scene
-    renderer.render( scene, camera );
+    // renderer.render( scene, camera );
     
     // update the damping camera movement
     controls.update(); 
     
   }
+
+  animate();
   
-  renderer.setAnimationLoop( animate );
+  // renderer.setAnimationLoop( animate );
   // hideLoadingScreen();
 
 }
