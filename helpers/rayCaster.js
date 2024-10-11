@@ -91,6 +91,9 @@ export function getHover( scene, camera, animateGo ) {
       // stop animation
       animateGo.value = false;
 
+      // dim the others
+      
+
       drawTitle( item );
       
       // make item color

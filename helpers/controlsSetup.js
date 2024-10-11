@@ -12,7 +12,7 @@ export function setControls( controls, camera ) {
   
   // Zoom settings
   controls.enableZoom = true; // Allow zooming
-  controls.zoomSpeed = 2.0; // Adjust zoom speed
+  controls.zoomSpeed = 0.5; // Adjust zoom speed
 
   // Optional: Set min/max distances to control how far the camera can zoom
   controls.minDistance = 10; // Minimum zoom distance
@@ -20,7 +20,7 @@ export function setControls( controls, camera ) {
 
   // Damping (smooth movement)
   controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
+  controls.dampingFactor = 0.01;
   
   // update mouse and touch controls
   // Remap left mouse button to pan
