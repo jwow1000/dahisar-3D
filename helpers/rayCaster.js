@@ -29,6 +29,16 @@ export function getHover( scene, camera, animateGo ) {
     
   }
 
+  // opacity all
+  function opacityAll() {
+    scene.children.forEach( ( child ) => {
+      if( child.type !== "Line" ) {
+        // console.log("wowwow", child.material)
+        child.material.opacity = 0.3;
+      }
+    })
+  }
+
   // clear all titles
   function clearAllPreviews() {
     scene.children.forEach(( child ) => {
@@ -44,7 +54,7 @@ export function getHover( scene, camera, animateGo ) {
       // return opacity back to 70%
       child.children.forEach((item, idx) => {
         if( idx > 0 ) {
-          item.material.linewidth = 2;
+          item.material.opacity = 0.3;
         }
       });
 
@@ -92,12 +102,11 @@ export function getHover( scene, camera, animateGo ) {
       animateGo.value = false;
 
       // dim the others
-      
+      opacityAll();
 
       drawTitle( item );
       
       // make item color
-      
       gsap.to( item.object.material.uniforms.u_grayScale, { value: 1.0, duration: 1.5 } );
 
       // hilight line connections
@@ -105,7 +114,8 @@ export function getHover( scene, camera, animateGo ) {
         
         // make full opaque, 1
         if( idx !== 0 ) {
-          child.material.linewidth = 6;
+          child.material.opacity = 1;
+
         }
 
       });

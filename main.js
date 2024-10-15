@@ -70,8 +70,7 @@ async function init3D() {
     story( item, scene, idx );
   })
         
-  console.log("rendering lines...", scene.children)
-
+  
   // create the lines
   scene.children.map((item, idx) => {
     
@@ -79,6 +78,7 @@ async function init3D() {
       line( item, scene );
     }
   })
+  console.log("rendering lines...", scene)
 
   // render the labels 
   labelRenderer.setSize(window.innerWidth, window.innerHeight);

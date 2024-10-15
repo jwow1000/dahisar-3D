@@ -1,13 +1,10 @@
 import * as THREE from "three";
-import { Line2 } from "three/examples/jsm/lines/Line2.js";
-import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
-import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { CSS2DObject } from "three/examples/jsm/Addons.js";
 import { randomColor, randStreamPosition, getRandStream } from "./random.js";
 import { grayscaleShader } from "./shaders.js";
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
-const white = new THREE.Color("rgb(255,255,255)");
+const white = new THREE.Color("#FFFFFF");
 const defaultImg =
   "https://cdn.prod.website-files.com/66e5c9799b48938aa3491deb/66eca12c7d639e4980f73ce3_3.2i_Cutout.png";
 const theStream = getRandStream(0, 127);
@@ -176,6 +173,7 @@ export const story = (item, scene, idx) => {
 // create lines
 export const line = (item, scene) => {
   const data = item.userData;
+  
   if (data.links) {
     // define the origin
     const originPoint = new THREE.Vector3(
@@ -185,51 +183,69 @@ export const line = (item, scene) => {
     );
 
     // define the material
-    // get a random color
-    const randoRGB = randomColor();
-    console.log("uggh", randoRGB);
-    const material = new LineMaterial({
-      color: randoRGB,
-      // opacity: 0.5,
-      linewidth: 2,
-      // transparent: true,
+    const materialSolid = new THREE.LineBasicMaterial({
+      color: white,
+      opacity: 0.3,
+      transparent: true,
+    });
+
+    const materialDashed = new THREE.LineDashedMaterial({
+      color: white,
+      opacity: 0.3,
+      dashSize: 0.1,
+      gapSize: 0.1,
+      linewidth: 0.5,
+      transparent: true,
     });
 
     // define the points, origin(this items position), end(the connections)
     // get the string and turn into an array
-    const links = data.links.replace(/\s/g, "").split(",");
+    const links = data.links.split(",").map(link => link.trim()); // Trim any extra spaces
+
+    // create an array of objects
+    const formattedLinks = links.map(link => {
+      const isThin = /thin/.test(link);                 // Check if 'thin' is present
+      const chapterLink = link.replace(/\s?thin/, "");  // Remove 'thin' if it's present
+      return { chapterLink, thin: isThin };             // Return an object with both fields
+    });
 
     // run through the array
-    links.forEach((e) => {
+    formattedLinks.forEach((e) => {
+      
       // get item with chapter name
       const found = scene.children.find(
-        (element) => element.userData.chapter === e
+        (element) => element.userData.chapter === e.chapterLink
       );
-      // console.log("e", found)
 
       if (found) {
         // define a points array
-        const pointsArr = [];
-
-        // set the origin point with this item's coordinates
-        pointsArr.push(...originPoint);
-
-        // get found item's coordinates
-        pointsArr.push(found.position.x, found.position.y, found.position.z);
+        // Define the points array with the origin and found item's coordinates
+        const pointsArr = [originPoint, new THREE.Vector3(found.position.x, found.position.y, found.position.z)];
 
         // form the line
-        const geometry = new LineGeometry();
-        geometry.setPositions(pointsArr);
-        // const geometry = new THREE.BufferGeometry().setFromPoints(pointsArr);
-        const newLine = new Line2(geometry, material);
+        // Create the geometry and add the points
+        const geometry = new THREE.BufferGeometry().setFromPoints(pointsArr);
+        
+        // dashed line or not?
+        const varMaterial = e.thin ? materialDashed : materialSolid;
+        
+        // make the line
+        const newLine = new THREE.Line(geometry, varMaterial);
+        
+        // If using a dashed line, compute the line distances
+        if (e.thin) {
+          newLine.computeLineDistances();
+        } 
 
         newLine.translateX(newLine.position.x - item.position.x);
         newLine.translateY(newLine.position.y - item.position.y);
         newLine.translateZ(newLine.position.z - item.position.z);
-
+        console.log("new lines: ", newLine)
         // add to node
-        item.add(newLine);
+        item.add( newLine );
       }
     });
   }
 };
+
+
