@@ -21,11 +21,14 @@ export const story = (item, scene, idx) => {
       u_brightness: { value: 1 }, // turn up brightness
       u_saturation: { value: 1 },
       u_contrast: { value: 1 },
+      u_scale: { value: 1.0 },
     },
     vertexShader: `
+      uniform float u_scale;
       varying vec2 vUv;
+      
       void main() {
-        vUv = uv;
+        vUv = uv * u_scale;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,

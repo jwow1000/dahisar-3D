@@ -51,6 +51,15 @@ export function getHover( scene, camera, animateGo ) {
       // return all to gray
       gsap.to( child.material.uniforms.u_grayScale, { value: 0.0, duration: 1 } );
 
+      // return item to scale
+      gsap.to( child.scale, {
+        x: 1,
+        y: 1,
+        duration: 1.5,  // Animation duration in seconds
+      });
+      
+      // gsap.to( child.material.uniforms.u_scale, {value: 1, duration: 1.5})
+
       // return opacity back to 70%
       child.children.forEach((item, idx) => {
         if( idx > 0 ) {
@@ -108,6 +117,15 @@ export function getHover( scene, camera, animateGo ) {
       
       // make item color
       gsap.to( item.object.material.uniforms.u_grayScale, { value: 1.0, duration: 1.5 } );
+      
+      // make item larger
+      gsap.to( item.object.scale, {
+        x: 1.5,    // Target scale for the x-axis
+        y: 1.5,
+        duration: 1.5,  // Animation duration in seconds
+      });
+      
+      // gsap.to( item.object.material.uniforms.u_scale, {value: 0.75, duration: 1.5})
 
       // hilight line connections
       item.object.children.forEach((child, idx) => {
@@ -115,7 +133,6 @@ export function getHover( scene, camera, animateGo ) {
         // make full opaque, 1
         if( idx !== 0 ) {
           child.material.opacity = 1;
-
         }
 
       });
