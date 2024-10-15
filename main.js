@@ -103,13 +103,14 @@ async function init3D() {
 
       const elapsedTime = clock.getElapsedTime();
       // pan camera
-      const animateTime = elapsedTime * 0.01;
+      const LFO = Math.sin( elapsedTime * 0.001 ) ;
+      const animateTime = elapsedTime * LFO;
       const sine =  Math.sin( animateTime ) * 0.001;
       const cos = Math.cos( animateTime ) * 0.001;
-      camera.position.x +=  sine;
-      controls.target.x += sine;
-      camera.position.y +=  cos;
-      controls.target.y += cos;
+      camera.position.x +=  sine * 10;
+      controls.target.x += sine * 10;
+      camera.position.y +=  cos * 10;
+      controls.target.y += cos * 10;
     }
 
 
