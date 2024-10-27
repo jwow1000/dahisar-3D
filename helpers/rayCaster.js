@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
+import { debounce } from "./debounce.js";
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -8,12 +9,17 @@ let currentStory = {};
 let isDragging = false;
 let startX = 0; 
 let startY = 0;
+let hoverState = false;
+
 
 // raycaster options
 raycaster.far = 30;
 
 
 export function getHover( scene, camera, animateGo ) {
+  
+  // debounced version of hover get preview
+  const debouncedHoverGetPreview = debounce(hoverGetPreview, 50);
   
   function onPointerMove( event ) {
     // calculate pointer position in normalized device coordinates
@@ -23,8 +29,8 @@ export function getHover( scene, camera, animateGo ) {
     pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     
     // get intersection if pointer moves
-    if( !storyFocus ) {
-      hoverGetPreview();
+    if( !storyFocus && !hoverState) {
+      debouncedHoverGetPreview();
     }
     
   }
@@ -52,13 +58,10 @@ export function getHover( scene, camera, animateGo ) {
       gsap.to( child.material.uniforms.u_grayScale, { value: 0.0, duration: 1 } );
 
       // return item to scale
-      gsap.to( child.scale, {
-        x: 1,
-        y: 1,
-        duration: 1.5,  // Animation duration in seconds
-      });
-      
-      // gsap.to( child.material.uniforms.u_scale, {value: 1, duration: 1.5})
+      gsap.to( child.material.uniforms.u_scale, {
+        value: 1.25,
+        duration: 1.5,
+      });      
 
       // return opacity back to 70%
       child.children.forEach((item, idx) => {
@@ -66,9 +69,8 @@ export function getHover( scene, camera, animateGo ) {
           item.material.opacity = 0.3;
         }
       });
-
-
     })
+    hoverState = false;
   }
 
   // function to draw the title
@@ -106,7 +108,8 @@ export function getHover( scene, camera, animateGo ) {
   function hoverGetPreview() {
     const item = getIntersect();
     
-    if( item ) {
+    if( item && !hoverState ) {
+      hoverState = true;
       // stop animation
       animateGo.value = false;
 
@@ -118,15 +121,12 @@ export function getHover( scene, camera, animateGo ) {
       // make item color
       gsap.to( item.object.material.uniforms.u_grayScale, { value: 1.0, duration: 1.5 } );
       
-      // make item larger
-      gsap.to( item.object.scale, {
-        x: 1.5,    // Target scale for the x-axis
-        y: 1.5,
-        duration: 1.5,  // Animation duration in seconds
+      // On hover, scale up 
+      gsap.to( item.object.material.uniforms.u_scale, {
+        value: 1.0,
+        duration: 1.5,
       });
-      
-      // gsap.to( item.object.material.uniforms.u_scale, {value: 0.75, duration: 1.5})
-
+     
       // hilight line connections
       item.object.children.forEach((child, idx) => {
         
@@ -141,6 +141,7 @@ export function getHover( scene, camera, animateGo ) {
       clearAllPreviews();
       // re-start animation
       animateGo.value = true;
+      hoverState = false;
     }
   }
   

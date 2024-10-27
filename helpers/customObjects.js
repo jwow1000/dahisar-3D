@@ -11,7 +11,7 @@ const theStream = getRandStream(0, 127);
 
 export const story = (item, scene, idx) => {
   // make the geometry for new story
-  const geometry = new THREE.PlaneGeometry(2, 2);
+  const geometry = new THREE.PlaneGeometry(3, 3);
 
   // make the shader material
   const material = new THREE.ShaderMaterial({
@@ -21,42 +21,48 @@ export const story = (item, scene, idx) => {
       u_brightness: { value: 1 }, // turn up brightness
       u_saturation: { value: 1 },
       u_contrast: { value: 1 },
-      u_scale: { value: 1.0 },
+      u_scale: { value: 1.25 },
     },
     vertexShader: `
       uniform float u_scale;
       varying vec2 vUv;
-      
+
       void main() {
-        vUv = uv * u_scale;
+
+        // Adjust the UV coordinates to center the scaling
+        vec2 centeredUv = uv - 0.5; // Shift UVs to center
+        vUv = (centeredUv * u_scale) + 0.5; // Scale and shift back
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+        
       }
     `,
     fragmentShader: `
       uniform sampler2D u_texture;
       uniform float u_grayScale;
+      uniform float u_scale; 
       varying vec2 vUv;
 
       void main() {
+        // Use the scaled UVs for sampling
         vec4 color = texture2D(u_texture, vUv);
-    
-        // Apply brightness (use a smaller value to prevent over-brightening)
+        
+        // Apply brightness
         vec3 finalColor = color.rgb + vec3(0.2);  // Small increment for brightness
         
         // Apply contrast
         finalColor = (finalColor - 0.5) * 1.3 + 0.5;  // Adjust contrast
-        
-        // Ensure the final color values are within the [0.0, 1.0] range
         finalColor = clamp(finalColor, 0.0, 1.0);  // Prevent values from exceeding
         
         // Grayscale effect
-        float gray = dot(finalColor, vec3(0.299, 0.587, 0.114));  // Use proper luminance values
-        gray = max(gray, 0.05);  // Ensure grayscale doesn't drop below a minimum value
+        float gray = dot(finalColor, vec3(0.299, 0.587, 0.114));
+        gray = max(gray, 0.05);
         vec3 grayscaleColor = vec3(gray);
 
         // Blend between grayscale and full color
         gl_FragColor = vec4(mix(grayscaleColor, finalColor, u_grayScale), color.a);
       }
+
  
     `,
     transparent: true, // Allow for transparency
@@ -107,7 +113,7 @@ export const story = (item, scene, idx) => {
       console.error("An error occurred loading the texture", error);
     }
   );
-
+  
   // add the story to the scene
   scene.add(node);
 
@@ -170,6 +176,11 @@ export const story = (item, scene, idx) => {
     showTitle: false,
     slug: item.slug,
     cardElem: item.cardElem,
+    ogPos: {
+      x: rand.x,
+      y: rand.y,
+      z: rand.z,
+    },
   };
 };
 

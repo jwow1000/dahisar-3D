@@ -107,14 +107,14 @@ async function init3D() {
       const animateTime = elapsedTime * LFO;
       const sine =  Math.sin( animateTime ) * 0.001;
       const cos = Math.cos( animateTime ) * 0.001;
-      camera.position.x +=  sine * 10;
-      controls.target.x += sine * 10;
-      camera.position.y +=  cos * 10;
-      controls.target.y += cos * 10;
+      camera.position.x +=  sine * 5;
+      controls.target.x += sine * 5;
+      camera.position.y +=  cos * 5;
+      controls.target.y += cos * 5;
     }
 
 
-    // render the CSS labels
+    // render the CSS labelsq
     labelRenderer.render(scene, camera);
     
     // render the 3d scene
