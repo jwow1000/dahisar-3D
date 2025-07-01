@@ -10,7 +10,7 @@ const theStream = getRandStream(0, 127);
 
 export const story = (item, scene, idx) => {
   // make the geometry for new story
-  const geometry = new THREE.PlaneGeometry(3, 3);
+  const geometry = new THREE.PlaneGeometry(5, 5);
 
   // make the shader material
   const material = new THREE.ShaderMaterial({
