@@ -41,6 +41,11 @@ export function randStreamPosition( stream ) {
   obj.x = ((stream % 10) * 4) - 20;        
   obj.y = (Math.floor( (stream % 25 / 5 ) ) * 4) - 10;
   obj.z = (Math.floor( (stream / 25) ) * 2) + 3;
+  
+  obj.x /= 1.5;        
+  obj.y /= 1.5; 
+  obj.z /= 1.5;  
+  
 
   return obj;
 }

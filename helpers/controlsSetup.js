@@ -37,20 +37,22 @@ export function setControls( controls, camera ) {
   };
 
   // start camera position
-  camera.position.z = 15;
+  camera.position.z = 20;
 
   // add event listener to clamp panning
   controls.addEventListener( 'change', e => {
     const x = controls.target.x;
     const y = controls.target.y;
-
-    if( x < -20 || x > 20 ) {
-      controls.target.setX( x < -20 ? -20 : 20 );
-      camera.position.setX( x < -20 ? -20 : 20 );
-    } else if(  y < -10 || y > 10 ) {
-      controls.target.setY( y < -10 ? -10 : 10 );
-      camera.position.setY( y < -10 ? -10 : 10 );
+    if( x < -8 || x > 8 ) {
+      controls.target.setX( x < -8 ? -8 : 8 );
+      camera.position.setX( x < -8 ? -8 : 8 );
     }
+    if( y < -5 || y > 5 ) {
+      controls.target.setY( y < -5 ? -5 : 5 );
+      camera.position.setY( y < -5 ? -5 : 5 );
+    }
+
+    
 
   })
 

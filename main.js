@@ -28,10 +28,10 @@ async function init3D() {
   const labelRenderer = new CSS2DRenderer();
   
   // for dev purposes get the story card and prview element in webfloe and make them dissapear
-  const webflowStory = document.getElementById("story-template");
-  const webflowPreview = document.getElementById("preview-template");
-  webflowPreview.style.display = "none"
-  webflowStory.style.display = "none"
+  // const webflowStory = document.getElementById("story-template");
+  // const webflowPreview = document.getElementById("preview-template");
+  // webflowPreview.style.display = "none"
+  // webflowStory.style.display = "none"
 
   // // get the loading screen and make it dissapear once the sketch is loaded
   // const loadingScreen = document.getElementById('loading-screen');
@@ -43,7 +43,7 @@ async function init3D() {
 
   // define scene, camera, renderer
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+  const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
   const renderer = new THREE.WebGLRenderer( {
     antialias: true,
     alpha: true

@@ -145,27 +145,11 @@ export function getHover( scene, camera, animateGo ) {
     }
   }
   
-  // function to update slug URL
-  function updateURL( storySlug ) {
-    const newURL = `${window.location.pathname}?story=${storySlug}`;
-    window.history.pushState( { story: storySlug }, '', newURL);
-  } 
-
-  function clearSlug() {
-    const path = window.location.pathname;
-    window.history.pushState( '','', path);
-    // console.log("pather", path)
-  }
-
-
   // open a story function
   function openStory( item ) {
     // get the data of the object
     const data = item.userData;
     
-    // update the url without reload
-    updateURL( data.slug );
-
     // get the story card and reveal it
     clearAllPreviews();
     const card = data.cardElem; 
@@ -178,7 +162,6 @@ export function getHover( scene, camera, animateGo ) {
   }
 
   function closeStory() {
-    clearSlug();
     currentStory.style.display = "none";
     storyFocus = false;
   }
@@ -204,7 +187,6 @@ export function getHover( scene, camera, animateGo ) {
 
     } else if ( storyFocus ) {
       closeStory();
-      
     }
   }
   
@@ -256,33 +238,7 @@ export function getHover( scene, camera, animateGo ) {
     return nodes.find( node => node.userData.slug === slug);
   }
 
-  // listen for popstate
-  window.addEventListener( 'popstate', ( event ) => {
-    const storySlug = event.state ? event.state.story : null;
-   
-    if( storySlug ) {
-      // get story by slug
-      const found = findNode( storySlug );
-      openStory( found )
-    } else {
-      closeStory();
-    }
-  }) 
+} 
 
-  // get story param function
-  function getStoryFromURL() {
-    const urlParams = new URLSearchParams( window.location.search );
-    const storySlug = urlParams.get('story');
-    return storySlug;
-  }
-  
-  // check to see if there are story params on load
-  const storySlug = getStoryFromURL();
-  if( storySlug ) {
-    // get story by slug
-    const found = findNode( storySlug );
-    openStory( found )
-  }
-  
-}
+ 
 

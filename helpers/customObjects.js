@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { CSS2DObject } from "three/examples/jsm/Addons.js";
-import { randomColor, randStreamPosition, getRandStream } from "./random.js";
-import { grayscaleShader } from "./shaders.js";
+import { randStreamPosition, getRandStream } from "./random.js";
 
 const blau = new THREE.Color("rgb(25,255,255,0.1)");
 const white = new THREE.Color("#FFFFFF");
@@ -119,7 +118,7 @@ export const story = (item, scene, idx) => {
 
   // random positon genrator no overlap
   const rand = randStreamPosition(theStream[idx]);
-  console.log("random position: ", rand);
+  // console.log("random position: ", rand);
 
   // Create a 2D label
   const labelDiv = document.createElement("div");
